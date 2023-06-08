@@ -1,0 +1,3 @@
+/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles/Chess-Playing-AI.dir
+/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles/rebuild_cache.dir
