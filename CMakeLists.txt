@@ -3,7 +3,7 @@ project(Chess-Playing-AI)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Chess-Playing-AI main.cpp)
+add_executable(Chess-Playing-AI chess.cpp)
 include_directories(/usr/local/include)
 
 find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)

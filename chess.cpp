@@ -39,33 +39,33 @@ sf::Font font;
 sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
 
 void loadTextures() {
-    pieceTextures[0].loadFromFile("../piecePics/whiteRook.png");
-    pieceTextures[1].loadFromFile("../piecePics/whiteKnight.png");
-    pieceTextures[2].loadFromFile("../piecePics/whiteBishop.png");
-    pieceTextures[3].loadFromFile("../piecePics/whiteQueen.png");
-    pieceTextures[4].loadFromFile("../piecePics/whiteKing.png");
-    pieceTextures[5].loadFromFile("../piecePics/whitePawn.png");
-    pieceTextures[6].loadFromFile("../piecePics/blackRook.png");
-    pieceTextures[7].loadFromFile("../piecePics/blackKnight.png");
-    pieceTextures[8].loadFromFile("../piecePics/blackBishop.png");
-    pieceTextures[9].loadFromFile("../piecePics/blackQueen.png");
-    pieceTextures[10].loadFromFile("../piecePics/blackKing.png");
-    pieceTextures[11].loadFromFile("../piecePics/blackPawn.png");
-    pieceTextures[12].loadFromFile("../piecePics/inCheck.png");
-    pieceTextures[13].loadFromFile("../piecePics/inCheckMate.png");
+    pieceTextures[0].loadFromFile("piecePics/whiteRook.png");
+    pieceTextures[1].loadFromFile("piecePics/whiteKnight.png");
+    pieceTextures[2].loadFromFile("piecePics/whiteBishop.png");
+    pieceTextures[3].loadFromFile("piecePics/whiteQueen.png");
+    pieceTextures[4].loadFromFile("piecePics/whiteKing.png");
+    pieceTextures[5].loadFromFile("piecePics/whitePawn.png");
+    pieceTextures[6].loadFromFile("piecePics/blackRook.png");
+    pieceTextures[7].loadFromFile("piecePics/blackKnight.png");
+    pieceTextures[8].loadFromFile("piecePics/blackBishop.png");
+    pieceTextures[9].loadFromFile("piecePics/blackQueen.png");
+    pieceTextures[10].loadFromFile("piecePics/blackKing.png");
+    pieceTextures[11].loadFromFile("piecePics/blackPawn.png");
+    pieceTextures[12].loadFromFile("piecePics/inCheck.png");
+    pieceTextures[13].loadFromFile("piecePics/inCheckMate.png");
 
-    highlightTextures[0].loadFromFile("../piecePics/whiteRookHighlight.png");
-    highlightTextures[1].loadFromFile("../piecePics/whiteKnightHighlight.png");
-    highlightTextures[2].loadFromFile("../piecePics/whiteBishopHighlight.png");
-    highlightTextures[3].loadFromFile("../piecePics/whiteQueenHighlight.png");
-    highlightTextures[4].loadFromFile("../piecePics/whiteKingHighlight.png");
-    highlightTextures[5].loadFromFile("../piecePics/whitePawnHighlight.png");
-    highlightTextures[6].loadFromFile("../piecePics/blackRookHighlight.png");
-    highlightTextures[7].loadFromFile("../piecePics/blackKnightHighlight.png");
-    highlightTextures[8].loadFromFile("../piecePics/blackBishopHighlight.png");
-    highlightTextures[9].loadFromFile("../piecePics/blackQueenHighlight.png");
-    highlightTextures[10].loadFromFile("../piecePics/blackKingHighlight.png");
-    highlightTextures[11].loadFromFile("../piecePics/blackPawnHighlight.png");
+    highlightTextures[0].loadFromFile("piecePics/whiteRookHighlight.png");
+    highlightTextures[1].loadFromFile("piecePics/whiteKnightHighlight.png");
+    highlightTextures[2].loadFromFile("piecePics/whiteBishopHighlight.png");
+    highlightTextures[3].loadFromFile("piecePics/whiteQueenHighlight.png");
+    highlightTextures[4].loadFromFile("piecePics/whiteKingHighlight.png");
+    highlightTextures[5].loadFromFile("piecePics/whitePawnHighlight.png");
+    highlightTextures[6].loadFromFile("piecePics/blackRookHighlight.png");
+    highlightTextures[7].loadFromFile("piecePics/blackKnightHighlight.png");
+    highlightTextures[8].loadFromFile("piecePics/blackBishopHighlight.png");
+    highlightTextures[9].loadFromFile("piecePics/blackQueenHighlight.png");
+    highlightTextures[10].loadFromFile("piecePics/blackKingHighlight.png");
+    highlightTextures[11].loadFromFile("piecePics/blackPawnHighlight.png");
 }
 
 void createSprites() {
@@ -317,9 +317,6 @@ bool isKingInCheck(int kingX, int kingY) {
     bool isWhiteKing = chessboard[kingY][kingX] > 0;
     for (int row = 0; row < boardSize; row++) {
         for (int col = 0; col < boardSize; col++) {
-            if (row == 4 && col == 7) {
-                int debug = 0;
-            }
             if ((isWhiteKing && chessboard[row][col] < 0) || (!isWhiteKing && chessboard[row][col] > 0)) {
                 if (isMoveAllowed(row, col, kingY, kingX)) {
                     return true;
@@ -527,7 +524,6 @@ void handleEvents() {
                                 window.setTitle("Black's Turn");
                             }
                             if (!isChecked) {
-                                chessboard[boardSize][0] = 0;
                                 pieceSprites[boardSize][0] = sf::Sprite();  // Clear the previous sprite
                                 pieceSprites[boardSize][0].setPosition(boardSize * squareSize, 0);
                                 render();
