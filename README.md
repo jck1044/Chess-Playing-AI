@@ -10,6 +10,10 @@ teet@teetsMacbook:~$ brew install git
 ```
 
 ```console
+teet@teetsMacbook:~$ brew install sfml
+```
+
+```console
 teet@teetsMacbook:~$ cd Desktop
 ```
 
