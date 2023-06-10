@@ -69,28 +69,28 @@ include CMakeFiles/Chess-Playing-AI.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/Chess-Playing-AI.dir/flags.make
 
-CMakeFiles/Chess-Playing-AI.dir/main.cpp.o: CMakeFiles/Chess-Playing-AI.dir/flags.make
-CMakeFiles/Chess-Playing-AI.dir/main.cpp.o: /Users/jaredking/Desktop/Chess-Playing-AI/main.cpp
-CMakeFiles/Chess-Playing-AI.dir/main.cpp.o: CMakeFiles/Chess-Playing-AI.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Chess-Playing-AI.dir/main.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess-Playing-AI.dir/main.cpp.o -MF CMakeFiles/Chess-Playing-AI.dir/main.cpp.o.d -o CMakeFiles/Chess-Playing-AI.dir/main.cpp.o -c /Users/jaredking/Desktop/Chess-Playing-AI/main.cpp
+CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o: CMakeFiles/Chess-Playing-AI.dir/flags.make
+CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o: /Users/jaredking/Desktop/Chess-Playing-AI/chess.cpp
+CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o: CMakeFiles/Chess-Playing-AI.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o -MF CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o.d -o CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o -c /Users/jaredking/Desktop/Chess-Playing-AI/chess.cpp
 
-CMakeFiles/Chess-Playing-AI.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chess-Playing-AI.dir/main.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jaredking/Desktop/Chess-Playing-AI/main.cpp > CMakeFiles/Chess-Playing-AI.dir/main.cpp.i
+CMakeFiles/Chess-Playing-AI.dir/chess.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chess-Playing-AI.dir/chess.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jaredking/Desktop/Chess-Playing-AI/chess.cpp > CMakeFiles/Chess-Playing-AI.dir/chess.cpp.i
 
-CMakeFiles/Chess-Playing-AI.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chess-Playing-AI.dir/main.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jaredking/Desktop/Chess-Playing-AI/main.cpp -o CMakeFiles/Chess-Playing-AI.dir/main.cpp.s
+CMakeFiles/Chess-Playing-AI.dir/chess.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chess-Playing-AI.dir/chess.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jaredking/Desktop/Chess-Playing-AI/chess.cpp -o CMakeFiles/Chess-Playing-AI.dir/chess.cpp.s
 
 # Object files for target Chess-Playing-AI
 Chess__Playing__AI_OBJECTS = \
-"CMakeFiles/Chess-Playing-AI.dir/main.cpp.o"
+"CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o"
 
 # External object files for target Chess-Playing-AI
 Chess__Playing__AI_EXTERNAL_OBJECTS =
 
-Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/main.cpp.o
+Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o
 Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/build.make
 Chess-Playing-AI: /usr/local/lib/libsfml-graphics.2.5.1.dylib
 Chess-Playing-AI: /usr/local/lib/libsfml-audio.2.5.1.dylib

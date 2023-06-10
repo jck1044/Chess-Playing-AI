@@ -129,29 +129,29 @@ Chess-Playing-AI/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/build
 .PHONY : Chess-Playing-AI/fast
 
-main.o: main.cpp.o
-.PHONY : main.o
+chess.o: chess.cpp.o
+.PHONY : chess.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/main.cpp.o
-.PHONY : main.cpp.o
+chess.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o
+.PHONY : chess.cpp.o
 
-main.i: main.cpp.i
-.PHONY : main.i
+chess.i: chess.cpp.i
+.PHONY : chess.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/main.cpp.i
-.PHONY : main.cpp.i
+chess.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/chess.cpp.i
+.PHONY : chess.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+chess.s: chess.cpp.s
+.PHONY : chess.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/main.cpp.s
-.PHONY : main.cpp.s
+chess.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/chess.cpp.s
+.PHONY : chess.cpp.s
 
 # Help Target
 help:
@@ -162,9 +162,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Chess-Playing-AI"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... chess.o"
+	@echo "... chess.i"
+	@echo "... chess.s"
 .PHONY : help
 
 

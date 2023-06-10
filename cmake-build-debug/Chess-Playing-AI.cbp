@@ -80,7 +80,7 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/jaredking/Desktop/Chess-Playing-AI/main.cpp">
+		<Unit filename="/Users/jaredking/Desktop/Chess-Playing-AI/chess.cpp">
 			<Option target="Chess-Playing-AI"/>
 		</Unit>
 		<Unit filename="/Users/jaredking/Desktop/Chess-Playing-AI/CMakeLists.txt">
