@@ -362,9 +362,6 @@ bool isKingInCheck(int kingX, int kingY) {
     bool isWhiteKing = chessboard[kingY][kingX] > 0;
     for (int row = 0; row < boardSize; row++) {
         for (int col = 0; col < boardSize; col++) {
-            if (row == 1 && col == 5 && !isWhiteKing) {
-                int debug = 0;
-            }
             if ((isWhiteKing && chessboard[row][col] < 0) || (!isWhiteKing && chessboard[row][col] > 0)) {
                 if (isMoveAllowed(row, col, kingY, kingX)) {
                     return true;
@@ -376,13 +373,12 @@ bool isKingInCheck(int kingX, int kingY) {
 }
 
 bool isInStalemate(bool isWhite) {
-    bool isPossibleMove = false;
     for (int initRow = 0; initRow < boardSize; initRow++) {
         for (int initCol = 0; initCol < boardSize; initCol++) {
             if ((isWhite && chessboard[initRow][initCol] > 0) ||
                 (!isWhite && chessboard[initRow][initCol] < 0)) {
-                if (isWhite && chessboard[initRow][initCol] == WHITEKING ||
-                    !isWhite && chessboard[initRow][initCol] == BLACKKING) {
+                if ((isWhite && chessboard[initRow][initCol] == WHITEKING) ||
+                    (!isWhite && chessboard[initRow][initCol] == BLACKKING)) {
                     if (isKingInCheck(initCol, initRow)) {
                         return false;
                     }
@@ -390,9 +386,6 @@ bool isInStalemate(bool isWhite) {
                 for (int newRow = 0; newRow < boardSize; newRow++) {
                     for (int newCol = 0; newCol < boardSize; newCol++) {
                         if (initRow != newRow || initCol != newCol) {
-                            if (initCol == 0 && newCol == 0 && initRow == 0 && newRow == 1) {
-                                int debug = 0;
-                            }
                             if (isMoveAllowed(initRow, initCol, newRow, newCol)) {
                                 int tempChessboard[boardSize][boardSize];
                                 for (int i = 0; i < boardSize; i++) {
@@ -402,8 +395,8 @@ bool isInStalemate(bool isWhite) {
                                 }
                                 chessboard[newRow][newCol] = chessboard[initRow][initCol];
                                 chessboard[initRow][initCol] = 0;
-                                if (isWhite && chessboard[newRow][newCol] == WHITEKING ||
-                                    !isWhite && chessboard[newRow][newCol] == BLACKKING) {
+                                if ((isWhite && chessboard[newRow][newCol] == WHITEKING) ||
+                                    (!isWhite && chessboard[newRow][newCol] == BLACKKING)) {
                                     if (!isKingInCheck(newCol, newRow)) {
                                         for (int i = 0; i < boardSize; i++) {
                                             for (int j = 0; j < boardSize; j++) {
@@ -616,9 +609,6 @@ MovePiece playGreedyMove() {
                                 }
                             }
                             if (isMoveAllowed) {
-                                if (initRow == 3 && initCol == 7 && selectedRow == 4 && selectedCol == 6) {
-                                    int debug = 0;
-                                }
                                 int score = getBoardEvaluation();
                                 for (int tempRow = 0; tempRow < boardSize; tempRow++) {
                                     for (int tempCol = 0; tempCol < boardSize; tempCol++) {
