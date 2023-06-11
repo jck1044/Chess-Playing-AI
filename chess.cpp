@@ -30,19 +30,17 @@ int curTurn = 1;
 int hundredMovesNoPawnMoveCounter = 0;
 std::vector<int> favorCenter = {4, 3, 5, 2, 6, 1, 7, 0};
 
-
 // Array to represent the chessboard
 int chessboard[boardSize][boardSize] = {
-        {-1, -2, -3, 0, -5, -3, -2, -1},
+        {-1, -2, -3, -4, -5, -3, -2, -1},
         {-6, -6, -6, -6, -6, -6, -6, -6},
         {0,  0,  0,  0,  0,  0,  0,  0},
         {0,  0,  0,  0,  0,  0,  0,  0},
-        {0,  0,  0,  0,  0,  0,  0,  -4},
         {0,  0,  0,  0,  0,  0,  0,  0},
-        {6,  6,  6,  6,  0,  0,  0,  6},
+        {0,  0,  0,  0,  0,  0,  0,  0},
+        {6,  6,  6,  6,  6,  6,  6,  6},
         {1,  2,  3,  4,  5,  3,  2,  1}
 };
-
 
 // Load chess piece textures
 sf::Texture pieceTextures[15];
@@ -583,10 +581,10 @@ MovePiece playGreedyMove() {
     MovePiece bestMove{};
     int bestScore = INT16_MAX;
     for (int initRow = boardSize - 1; initRow >= 0; initRow--) {
-        for (int initCol : favorCenter) {
+        for (int initCol: favorCenter) {
             if (chessboard[initRow][initCol] < 0) {
                 for (int selectedRow = boardSize - 1; selectedRow >= 0; selectedRow--) {
-                    for (int selectedCol : favorCenter) {
+                    for (int selectedCol: favorCenter) {
                         int isLegal = isMoveAllowed(initRow, initCol, selectedRow, selectedCol);
                         if (isLegal == 1) {
                             int tempChessboard[boardSize][boardSize];
@@ -791,7 +789,7 @@ void handleEvents() {
                 }
             }
         }
-    } else if (!isGameOver){
+    } else if (!isGameOver) {
         MovePiece greedyMove = playGreedyMove();
         int selectedRow = greedyMove.initRow;
         int selectedCol = greedyMove.initCol;
