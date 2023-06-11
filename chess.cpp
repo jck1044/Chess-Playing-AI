@@ -482,12 +482,14 @@ bool canKingEscapeCheck(int kingX, int kingY) {
                            {-1, -1},
                            {0,  -1},
                            {1,  -1}};
+    bool isKingWhite = chessboard[kingY][kingX];
+
     for (int i = 0; i < 8; i++) {
         int newX = kingX + kingMoves[i][0];
         int newY = kingY + kingMoves[i][1];
         if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
             // Check if the new position is not under threat
-            if (chessboard[newY][newX] == 0) {
+            if ((isKingWhite && chessboard[newY][newX] <= 0) || (!isKingWhite && chessboard[newY][newX] >= 0)) {
                 int tempChessboard[boardSize][boardSize];
                 for (int i = 0; i < boardSize; i++) {
                     for (int j = 0; j < boardSize; j++) {
@@ -870,7 +872,9 @@ int main() {
     loadTextures();
     createSprites();
     while (window.isOpen()) {
-        handleEvents();
+        if (!isGameOver) {
+            handleEvents();
+        }
         render();
     }
     return 0;
