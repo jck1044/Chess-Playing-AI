@@ -1,5 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <vector>
+
+
+struct MovePiece {
+    int piece;
+    int initRow = -1;
+    int initCol = -1;
+    int newRow = -1;
+    int newCol = -1;
+};
 
 sf::RenderWindow window(sf::VideoMode(1500, 1500), "White's Turn");
 const int boardSize = 8;
@@ -17,6 +27,7 @@ const int WHITEBISHOP = 3;
 const int WHITEKNIGHT = 2;
 const int WHITEROOK = 1;
 int curTurn = 1;
+int hundredMovesNoPawnMoveCounter = 0;
 
 // Array to represent the chessboard
 int chessboard[boardSize][boardSize] = {
@@ -30,12 +41,11 @@ int chessboard[boardSize][boardSize] = {
         {1,  2,  3,  4,  5,  3,  2,  1}
 };
 
+
 // Load chess piece textures
-sf::Texture pieceTextures[14];
+sf::Texture pieceTextures[15];
 sf::Texture highlightTextures[12];
 sf::Sprite pieceSprites[boardSize + 1][boardSize];
-sf::Text scoreText;
-sf::Font font;
 sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
 
 void loadTextures() {
@@ -53,6 +63,7 @@ void loadTextures() {
     pieceTextures[11].loadFromFile("../piecePics/blackPawn.png");
     pieceTextures[12].loadFromFile("../piecePics/inCheck.png");
     pieceTextures[13].loadFromFile("../piecePics/inCheckMate.png");
+    pieceTextures[14].loadFromFile("../piecePics/draw.png");
 
     highlightTextures[0].loadFromFile("../piecePics/whiteRookHighlight.png");
     highlightTextures[1].loadFromFile("../piecePics/whiteKnightHighlight.png");
@@ -85,6 +96,7 @@ void createSprites() {
     }
     pieceSprites[boardSize][0].setPosition(boardSize * squareSize, 0 * squareSize);
     pieceSprites[boardSize][1].setPosition(boardSize * squareSize, 1 * squareSize);
+    pieceSprites[boardSize][2].setPosition(boardSize * squareSize, 2 * squareSize);
 
 }
 
@@ -116,12 +128,39 @@ void drawPieces() {
     }
     window.draw(pieceSprites[boardSize][0]);
     window.draw(pieceSprites[boardSize][1]);
+    window.draw(pieceSprites[boardSize][2]);
 }
 
+int getBoardEvaluation() {
+    int score = 0;
+    for (int row = 0; row < boardSize; row++) {
+        for (int col = 0; col < boardSize; col++) {
+            if (chessboard[row][col] == WHITEPAWN) {
+                score++;
+            } else if (chessboard[row][col] == BLACKPAWN) {
+                score--;
+            } else if (chessboard[row][col] == WHITEKNIGHT || chessboard[row][col] == WHITEBISHOP) {
+                score = score + 3;
+            } else if (chessboard[row][col] == BLACKKNIGHT || chessboard[row][col] == BLACKBISHOP) {
+                score = score - 3;
+            } else if (chessboard[row][col] == WHITEROOK) {
+                score = score + 5;
+            } else if (chessboard[row][col] == BLACKROOK) {
+                score = score - 5;
+            } else if (chessboard[row][col] == WHITEQUEEN) {
+                score = score + 9;
+            } else if (chessboard[row][col] == BLACKQUEEN) {
+                score = score - 9;
+            }
+        }
+    }
+    return score;
+}
 
 bool isRookMoveValid(int firstCol, int firstRow, int secondCol, int secondRow, bool isWhite) {
     // Check if the move is a horizontal move
-    if ((isWhite && chessboard[secondRow][secondCol] <= 0) || (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
+    if ((isWhite && chessboard[secondRow][secondCol] <= 0) ||
+        (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
         if (firstRow == secondRow && firstCol != secondCol) {
             // Check if there are any pieces blocking the horizontal path
             int step = (secondCol > firstCol) ? 1 : -1;
@@ -149,7 +188,8 @@ bool isRookMoveValid(int firstCol, int firstRow, int secondCol, int secondRow, b
 }
 
 bool isBishopMoveValid(int firstCol, int firstRow, int secondCol, int secondRow, bool isWhite) {
-    if ((isWhite && chessboard[secondRow][secondCol] <= 0) || (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
+    if ((isWhite && chessboard[secondRow][secondCol] <= 0) ||
+        (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
         // Check if the move is a diagonal move
         if (std::abs(firstCol - secondCol) == std::abs(firstRow - secondRow)) {
             // Determine the direction of the diagonal move
@@ -173,7 +213,8 @@ bool isBishopMoveValid(int firstCol, int firstRow, int secondCol, int secondRow,
 }
 
 bool isKnightMoveValid(int firstCol, int firstRow, int secondCol, int secondRow, bool isWhite) {
-    if ((isWhite && chessboard[secondRow][secondCol] <= 0) || (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
+    if ((isWhite && chessboard[secondRow][secondCol] <= 0) ||
+        (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
         // Calculate the absolute differences in row and column
         int diffX = std::abs(firstCol - secondCol);
         int diffY = std::abs(firstRow - secondRow);
@@ -189,7 +230,8 @@ bool isKnightMoveValid(int firstCol, int firstRow, int secondCol, int secondRow,
 }
 
 bool isQueenMoveValid(int firstCol, int firstRow, int secondCol, int secondRow, bool isWhite) {
-    if ((isWhite && chessboard[secondRow][secondCol] <= 0) || (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
+    if ((isWhite && chessboard[secondRow][secondCol] <= 0) ||
+        (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
         // Calculate the absolute differences in row and column
         int diffX = std::abs(firstCol - secondCol);
         int diffY = std::abs(firstRow - secondRow);
@@ -235,7 +277,8 @@ bool isQueenMoveValid(int firstCol, int firstRow, int secondCol, int secondRow, 
 }
 
 bool isKingMoveValid(int firstCol, int firstRow, int secondCol, int secondRow, bool isWhite) {
-    if ((isWhite && chessboard[secondRow][secondCol] <= 0) || (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
+    if ((isWhite && chessboard[secondRow][secondCol] <= 0) ||
+        (!isWhite && chessboard[secondRow][secondCol] >= 0)) {
         // Calculate the absolute differences in row and column
         int diffX = std::abs(firstCol - secondCol);
         int diffY = std::abs(firstRow - secondRow);
@@ -260,7 +303,8 @@ bool isPawnMoveValid(int firstCol, int firstRow, int secondCol, int secondRow, b
             return true;
         }
         // Check if the move is a capture (diagonal move)
-        if (std::abs(firstCol - secondCol) == 1 && firstRow - secondRow == 1 && chessboard[secondRow][secondCol] < 0) {
+        if (std::abs(firstCol - secondCol) == 1 && firstRow - secondRow == 1 &&
+            chessboard[secondRow][secondCol] < 0) {
             return true;
         }
     } else {
@@ -274,7 +318,8 @@ bool isPawnMoveValid(int firstCol, int firstRow, int secondCol, int secondRow, b
             return true;
         }
         // Check if the move is a capture (diagonal move)
-        if (std::abs(firstCol - secondCol) == 1 && firstRow - secondRow == -1 && chessboard[secondRow][secondCol] > 0) {
+        if (std::abs(firstCol - secondCol) == 1 && firstRow - secondRow == -1 &&
+            chessboard[secondRow][secondCol] > 0) {
             return true;
         }
     }
@@ -317,6 +362,9 @@ bool isKingInCheck(int kingX, int kingY) {
     bool isWhiteKing = chessboard[kingY][kingX] > 0;
     for (int row = 0; row < boardSize; row++) {
         for (int col = 0; col < boardSize; col++) {
+            if (row == 1 && col == 5 && !isWhiteKing) {
+                int debug = 0;
+            }
             if ((isWhiteKing && chessboard[row][col] < 0) || (!isWhiteKing && chessboard[row][col] > 0)) {
                 if (isMoveAllowed(row, col, kingY, kingX)) {
                     return true;
@@ -325,6 +373,103 @@ bool isKingInCheck(int kingX, int kingY) {
         }
     }
     return false;
+}
+
+bool isInStalemate(bool isWhite) {
+    bool isPossibleMove = false;
+    for (int initRow = 0; initRow < boardSize; initRow++) {
+        for (int initCol = 0; initCol < boardSize; initCol++) {
+            if ((isWhite && chessboard[initRow][initCol] > 0) ||
+                (!isWhite && chessboard[initRow][initCol] < 0)) {
+                if (isWhite && chessboard[initRow][initCol] == WHITEKING ||
+                    !isWhite && chessboard[initRow][initCol] == BLACKKING) {
+                    if (isKingInCheck(initCol, initRow)) {
+                        return false;
+                    }
+                }
+                for (int newRow = 0; newRow < boardSize; newRow++) {
+                    for (int newCol = 0; newCol < boardSize; newCol++) {
+                        if (initRow != newRow || initCol != newCol) {
+                            if (initCol == 0 && newCol == 0 && initRow == 0 && newRow == 1) {
+                                int debug = 0;
+                            }
+                            if (isMoveAllowed(initRow, initCol, newRow, newCol)) {
+                                int tempChessboard[boardSize][boardSize];
+                                for (int i = 0; i < boardSize; i++) {
+                                    for (int j = 0; j < boardSize; j++) {
+                                        tempChessboard[i][j] = chessboard[i][j];
+                                    }
+                                }
+                                chessboard[newRow][newCol] = chessboard[initRow][initCol];
+                                chessboard[initRow][initCol] = 0;
+                                if (isWhite && chessboard[newRow][newCol] == WHITEKING ||
+                                    !isWhite && chessboard[newRow][newCol] == BLACKKING) {
+                                    if (!isKingInCheck(newCol, newRow)) {
+                                        for (int i = 0; i < boardSize; i++) {
+                                            for (int j = 0; j < boardSize; j++) {
+                                                chessboard[i][j] = tempChessboard[i][j];
+                                            }
+                                        }
+                                        return false;
+                                    }
+                                } else {
+                                    for (int i = 0; i < boardSize; i++) {
+                                        for (int j = 0; j < boardSize; j++) {
+                                            chessboard[i][j] = tempChessboard[i][j];
+                                        }
+                                    }
+                                    return false;
+                                }
+                                for (int i = 0; i < boardSize; i++) {
+                                    for (int j = 0; j < boardSize; j++) {
+                                        chessboard[i][j] = tempChessboard[i][j];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool isInsufficientMaterial() {
+    int numWhiteBishops = 0;
+    int numWhiteKnights = 0;
+    int numBlackBishops = 0;
+    int numBlackKnights = 0;
+    for (auto &row: chessboard) {
+        for (int col: row) {
+            if (col == WHITEPAWN || col == BLACKPAWN || col == WHITEQUEEN || col == BLACKQUEEN || col == WHITEROOK ||
+                col == BLACKROOK) {
+                return false;
+            }
+            if (col == WHITEBISHOP) {
+                numWhiteBishops++;
+                if (numWhiteBishops > 1) {
+                    return false;
+                }
+            } else if (col == WHITEKNIGHT) {
+                numWhiteKnights++;
+                if (numWhiteKnights > 1) {
+                    return false;
+                }
+            } else if (col == BLACKBISHOP) {
+                numBlackBishops++;
+                if (numBlackBishops > 1) {
+                    return false;
+                }
+            } else if (col == BLACKKNIGHT) {
+                numBlackKnights++;
+                if (numBlackKnights > 1) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 bool canKingEscapeCheck(int kingX, int kingY) {
@@ -343,8 +488,26 @@ bool canKingEscapeCheck(int kingX, int kingY) {
         if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
             // Check if the new position is not under threat
             if (chessboard[newY][newX] == 0) {
+                int tempChessboard[boardSize][boardSize];
+                for (int i = 0; i < boardSize; i++) {
+                    for (int j = 0; j < boardSize; j++) {
+                        tempChessboard[i][j] = chessboard[i][j];
+                    }
+                }
+                chessboard[newY][newY] = chessboard[kingY][kingX];
+                chessboard[kingY][kingX] = 0;
                 if (!isKingInCheck(newX, newY)) {
+                    for (int i = 0; i < boardSize; i++) {
+                        for (int j = 0; j < boardSize; j++) {
+                            chessboard[i][j] = tempChessboard[i][j];
+                        }
+                    }
                     return true;
+                }
+                for (int i = 0; i < boardSize; i++) {
+                    for (int j = 0; j < boardSize; j++) {
+                        chessboard[i][j] = tempChessboard[i][j];
+                    }
                 }
             }
         }
@@ -411,63 +574,195 @@ void render() {
     window.display();
 }
 
-void handleEvents() {
-    static bool isPieceSelected = false;
-    static sf::Vector2i selectedPiecePosition;
-    sf::Event event{};
-    while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
-            window.close();
-        } else if (event.type == sf::Event::MouseButtonPressed) {
-            if (event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-                int col = mousePosition.x / squareSize;
-                int row = mousePosition.y / squareSize;
-                if (!isPieceSelected) {
-                    // First click, select the piece
-                    if ((chessboard[row][col] > 0 && curTurn == 1) || (chessboard[row][col] < 0 && curTurn == 2)) {
-                        isPieceSelected = true;
-                        selectedPiecePosition = sf::Vector2i(col, row);
-                        int pieceIndex = chessboard[row][col];
-                        if (pieceIndex < 0) {
-                            pieceIndex = ((pieceIndex + 1) * -1) + 6;
-                        } else {
-                            pieceIndex = pieceIndex - 1;
-                        }
-                        pieceSprites[row][col].setTexture(highlightTextures[pieceIndex]);
-                    }
-                } else {
-                    // Second click, place the piece
-                    int selectedCol = selectedPiecePosition.x;
-                    int selectedRow = selectedPiecePosition.y;
-                    int isLegal = isMoveAllowed(selectedRow, selectedCol, row, col);
-                    if (isLegal == 1) {
-                        int tempChessboard[boardSize][boardSize];
-                        for (int i = 0; i < boardSize; i++) {
-                            for (int j = 0; j < boardSize; j++) {
-                                tempChessboard[i][j] = chessboard[i][j];
+static bool isPieceSelected = false;
+bool isGameOver = false;
+
+MovePiece playGreedyMove() {
+    MovePiece bestMove{};
+    int bestScore = INT16_MAX;
+    for (int initRow = boardSize - 1; initRow >= 0; initRow--) {
+        for (int initCol = boardSize - 1; initCol >= 0; initCol--) {
+            if (chessboard[initRow][initCol] < 0) {
+                for (int selectedRow = boardSize - 1; selectedRow >= 0; selectedRow--) {
+                    for (int selectedCol = boardSize - 1; selectedCol >= 0; selectedCol--) {
+                        int isLegal = isMoveAllowed(initRow, initCol, selectedRow, selectedCol);
+                        if (isLegal == 1) {
+                            int tempChessboard[boardSize][boardSize];
+                            for (int i = 0; i < boardSize; i++) {
+                                for (int j = 0; j < boardSize; j++) {
+                                    tempChessboard[i][j] = chessboard[i][j];
+                                }
+                            }
+                            if (selectedRow == 0 && chessboard[selectedRow][selectedCol] == BLACKPAWN) { //promotion
+                                chessboard[selectedRow][selectedCol] = BLACKQUEEN;
+                            } else {
+                                chessboard[selectedRow][selectedCol] = chessboard[initRow][initCol];
+                            }
+                            chessboard[initRow][initCol] = 0;
+                            bool isMoveAllowed = true;
+                            for (int tempRow = 0; tempRow < boardSize; tempRow++) {
+                                for (int tempCol = 0; tempCol < boardSize; tempCol++) {
+                                    if ((curTurn == 1 && chessboard[tempRow][tempCol] == 5) ||
+                                        (curTurn == 2 && chessboard[tempRow][tempCol] == -5)) {// king
+                                        if (isKingInCheck(tempCol, tempRow)) {
+                                            isMoveAllowed = false;
+                                            tempRow = boardSize;
+                                            tempCol = boardSize;
+                                        }
+                                    }
+
+                                }
+                            }
+                            if (isMoveAllowed) {
+                                if (initRow == 3 && initCol == 7 && selectedRow == 4 && selectedCol == 6) {
+                                    int debug = 0;
+                                }
+                                int score = getBoardEvaluation();
+                                if (score < bestScore) {
+                                    bestMove.initRow = initRow;
+                                    bestMove.initCol = initCol;
+                                    bestMove.newRow = selectedRow;
+                                    bestMove.newCol = selectedCol;
+                                    bestScore = score;
+                                }
+                            }
+                            for (int i = 0; i < boardSize; i++) {
+                                for (int j = 0; j < boardSize; j++) {
+                                    chessboard[i][j] = tempChessboard[i][j];
+                                }
                             }
                         }
-                        chessboard[row][col] = chessboard[selectedRow][selectedCol];
-                        chessboard[selectedRow][selectedCol] = 0;
-                        bool isMoveAllowed = true;
-                        for (int tempRow = 0; tempRow < boardSize; tempRow++) {
-                            for (int tempCol = 0; tempCol < boardSize; tempCol++) {
-                                if ((curTurn == 1 && chessboard[tempRow][tempCol] == 5) ||
-                                    (curTurn == 2 && chessboard[tempRow][tempCol] == -5)) {// king
-                                    if (isKingInCheck(tempCol, tempRow)) {
-                                        isMoveAllowed = false;
-                                        tempRow = boardSize;
-                                        tempCol = boardSize;
+                    }
+                }
+            }
+        }
+    }
+    return bestMove;
+}
+
+
+void handleEvents() {
+    if (curTurn == 1) {
+        static sf::Vector2i selectedPiecePosition;
+        sf::Event event{};
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            } else if (event.type == sf::Event::MouseButtonPressed && !isGameOver) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                    int col = mousePosition.x / squareSize;
+                    int row = mousePosition.y / squareSize;
+                    if (!isPieceSelected) {
+                        // First click, select the piece
+                        if ((chessboard[row][col] > 0 && curTurn == 1) ||
+                            (chessboard[row][col] < 0 && curTurn == 2)) {
+                            isPieceSelected = true;
+                            selectedPiecePosition = sf::Vector2i(col, row);
+                            int pieceIndex = chessboard[row][col];
+                            if (pieceIndex < 0) {
+                                pieceIndex = ((pieceIndex + 1) * -1) + 6;
+                            } else {
+                                pieceIndex = pieceIndex - 1;
+                            }
+                            pieceSprites[row][col].setTexture(highlightTextures[pieceIndex]);
+                        }
+                    } else {
+                        // Second click, place the piece
+                        int selectedCol = selectedPiecePosition.x;
+                        int selectedRow = selectedPiecePosition.y;
+                        int isLegal = isMoveAllowed(selectedRow, selectedCol, row, col);
+                        if (isLegal == 1) {
+                            int tempChessboard[boardSize][boardSize];
+                            for (int i = 0; i < boardSize; i++) {
+                                for (int j = 0; j < boardSize; j++) {
+                                    tempChessboard[i][j] = chessboard[i][j];
+                                }
+                            }
+                            if (row == 0 && chessboard[selectedRow][selectedCol] == WHITEPAWN) { //promotion
+                                chessboard[row][col] = WHITEQUEEN;
+                            } else {
+                                chessboard[row][col] = chessboard[selectedRow][selectedCol];
+                            }
+                            chessboard[selectedRow][selectedCol] = 0;
+                            bool isMoveAllowed = true;
+                            for (int tempRow = 0; tempRow < boardSize; tempRow++) {
+                                for (int tempCol = 0; tempCol < boardSize; tempCol++) {
+                                    if ((curTurn == 1 && chessboard[tempRow][tempCol] == 5) ||
+                                        (curTurn == 2 && chessboard[tempRow][tempCol] == -5)) {// king
+                                        if (isKingInCheck(tempCol, tempRow)) {
+                                            isMoveAllowed = false;
+                                            tempRow = boardSize;
+                                            tempCol = boardSize;
+                                        }
                                     }
+
+                                }
+                            }
+                            if (isMoveAllowed) {
+
+                                pieceSprites[row][col] = pieceSprites[selectedRow][selectedCol];
+                                pieceSprites[selectedRow][selectedCol] = sf::Sprite();  // Clear the previous sprite
+                                pieceSprites[row][col].setPosition(col * squareSize, row * squareSize);
+                                int pieceIndex = chessboard[row][col];
+                                if (pieceIndex < 0) {
+                                    pieceIndex = ((pieceIndex + 1) * -1) + 6;
+                                } else {
+                                    pieceIndex = pieceIndex - 1;
+                                }
+                                pieceSprites[row][col].setTexture(pieceTextures[pieceIndex]);
+                                isPieceSelected = false;
+                                curTurn = (curTurn % 2) + 1;
+                                int isChecked = false;
+                                if (chessboard[row][col] == WHITEPAWN || chessboard[row][col] == BLACKPAWN) {
+                                    hundredMovesNoPawnMoveCounter = 0;
+                                } else {
+                                    hundredMovesNoPawnMoveCounter++;
                                 }
 
+                                if (isInStalemate(false) || hundredMovesNoPawnMoveCounter >= 100 ||
+                                    isInsufficientMaterial()) {
+                                    pieceSprites[boardSize][2].setTexture(pieceTextures[14]);
+                                    window.draw(pieceSprites[boardSize][2]);
+                                    render();
+                                    isGameOver = true;
+                                } else {
+                                    for (int tempRow = 0; tempRow < boardSize; tempRow++) {
+                                        for (int tempCol = 0; tempCol < boardSize; tempCol++) {
+                                            if (chessboard[tempRow][tempCol] == -5) {// king
+                                                if (isKingInCheck(tempCol, tempRow)) {
+                                                    if (isKingInCheckmate(tempCol, tempRow)) {
+                                                        pieceSprites[boardSize][1].setTexture(pieceTextures[13]);
+                                                        window.draw(pieceSprites[boardSize][1]);
+                                                        render();
+                                                        isGameOver = true;
+                                                    } else {
+                                                        pieceSprites[boardSize][0].setTexture(pieceTextures[12]);
+                                                        window.draw(pieceSprites[boardSize][0]);
+                                                        window.display();
+                                                        tempRow = boardSize;
+                                                        tempCol = boardSize;
+                                                        isChecked = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    window.setTitle("Black's Turn");
+                                }
+                                if (!isChecked) {
+                                    pieceSprites[boardSize][0] = sf::Sprite();  // Clear the previous sprite
+                                    pieceSprites[boardSize][0].setPosition(boardSize * squareSize, 0);
+                                    render();
+                                }
+                            } else {
+                                for (int i = 0; i < boardSize; i++) {
+                                    for (int j = 0; j < boardSize; j++) {
+                                        chessboard[i][j] = tempChessboard[i][j];
+                                    }
+                                }
                             }
-                        }
-                        if (isMoveAllowed) {
-                            pieceSprites[row][col] = pieceSprites[selectedRow][selectedCol];
-                            pieceSprites[selectedRow][selectedCol] = sf::Sprite();  // Clear the previous sprite
-                            pieceSprites[row][col].setPosition(col * squareSize, row * squareSize);
+                        } else if (isLegal == -1) {
                             int pieceIndex = chessboard[row][col];
                             if (pieceIndex < 0) {
                                 pieceIndex = ((pieceIndex + 1) * -1) + 6;
@@ -476,76 +771,83 @@ void handleEvents() {
                             }
                             pieceSprites[row][col].setTexture(pieceTextures[pieceIndex]);
                             isPieceSelected = false;
-                            curTurn = (curTurn % 2) + 1;
-                            int isChecked = false;
-                            if (curTurn == 1) {
-                                for (int tempRow = 0; tempRow < boardSize; tempRow++) {
-                                    for (int tempCol = 0; tempCol < boardSize; tempCol++) {
-                                        if (chessboard[tempRow][tempCol] == 5) {// king
-                                            if (isKingInCheck(tempCol, tempRow)) {
-                                                if (isKingInCheckmate(tempCol, tempRow)) {
-                                                    pieceSprites[boardSize][1].setTexture(pieceTextures[13]);
-                                                    window.draw(pieceSprites[boardSize][1]);
-                                                    render();
-                                                    while (1);
-                                                }
-                                                pieceSprites[boardSize][0].setTexture(pieceTextures[12]);
-                                                window.draw(pieceSprites[boardSize][0]);
-                                                window.display();
-                                                tempRow = boardSize;
-                                                tempCol = boardSize;
-                                                isChecked = true;
-                                            }
-                                        }
-                                    }
-                                }
-                                window.setTitle("White's Turn");
-                            } else {
-                                for (int tempRow = 0; tempRow < boardSize; tempRow++) {
-                                    for (int tempCol = 0; tempCol < boardSize; tempCol++) {
-                                        if (chessboard[tempRow][tempCol] == -5) {// king
-                                            if (isKingInCheck(tempCol, tempRow)) {
-                                                if (isKingInCheckmate(tempCol, tempRow)) {
-                                                    pieceSprites[boardSize][1].setTexture(pieceTextures[13]);
-                                                    window.draw(pieceSprites[boardSize][1]);
-                                                    render();
-                                                    while (1);
-                                                }
-                                                pieceSprites[boardSize][0].setTexture(pieceTextures[12]);
-                                                window.draw(pieceSprites[boardSize][0]);
-                                                window.display();
-                                                tempRow = boardSize;
-                                                tempCol = boardSize;
-                                                isChecked = true;
-                                            }
-                                        }
-                                    }
-                                }
-                                window.setTitle("Black's Turn");
-                            }
-                            if (!isChecked) {
-                                pieceSprites[boardSize][0] = sf::Sprite();  // Clear the previous sprite
-                                pieceSprites[boardSize][0].setPosition(boardSize * squareSize, 0);
-                                render();
-                            }
-                        } else {
-                            for (int i = 0; i < boardSize; i++) {
-                                for (int j = 0; j < boardSize; j++) {
-                                    chessboard[i][j] = tempChessboard[i][j];
-                                }
-                            }
                         }
-                    } else if (isLegal == -1) {
-                        int pieceIndex = chessboard[row][col];
-                        if (pieceIndex < 0) {
-                            pieceIndex = ((pieceIndex + 1) * -1) + 6;
-                        } else {
-                            pieceIndex = pieceIndex - 1;
-                        }
-                        pieceSprites[row][col].setTexture(pieceTextures[pieceIndex]);
-                        isPieceSelected = false;
                     }
                 }
+            }
+        }
+    } else {
+        MovePiece greedyMove = playGreedyMove();
+        int selectedRow = greedyMove.initRow;
+        int selectedCol = greedyMove.initCol;
+        int row = greedyMove.newRow;
+        int col = greedyMove.newCol;
+
+        if (selectedRow == -1) {
+            pieceSprites[boardSize][1].setTexture(pieceTextures[13]);
+            window.draw(pieceSprites[boardSize][1]);
+            render();
+            isGameOver = true;
+        } else {
+            if (row == 0 && chessboard[selectedRow][selectedCol] == BLACKPAWN) { //promotion
+                chessboard[row][col] = BLACKQUEEN;
+            } else {
+                chessboard[row][col] = chessboard[selectedRow][selectedCol];
+            }
+            chessboard[selectedRow][selectedCol] = 0;
+
+            pieceSprites[row][col] = pieceSprites[selectedRow][selectedCol];
+            pieceSprites[selectedRow][selectedCol] = sf::Sprite();  // Clear the previous sprite
+            pieceSprites[row][col].setPosition(col * squareSize, row * squareSize);
+            int pieceIndex = chessboard[row][col];
+            if (pieceIndex < 0) {
+                pieceIndex = ((pieceIndex + 1) * -1) + 6;
+            } else {
+                pieceIndex = pieceIndex - 1;
+            }
+            pieceSprites[row][col].setTexture(pieceTextures[pieceIndex]);
+            isPieceSelected = false;
+            curTurn = (curTurn % 2) + 1;
+            int isChecked = false;
+            if (chessboard[row][col] == WHITEPAWN || chessboard[row][col] == BLACKPAWN) {
+                hundredMovesNoPawnMoveCounter = 0;
+            } else {
+                hundredMovesNoPawnMoveCounter++;
+            }
+            if (isInStalemate(true) || hundredMovesNoPawnMoveCounter >= 100 ||
+                isInsufficientMaterial()) {
+                pieceSprites[boardSize][2].setTexture(pieceTextures[14]);
+                window.draw(pieceSprites[boardSize][2]);
+                render();
+                isGameOver = true;
+            } else {
+                for (int tempRow = 0; tempRow < boardSize; tempRow++) {
+                    for (int tempCol = 0; tempCol < boardSize; tempCol++) {
+                        if (chessboard[tempRow][tempCol] == 5) {// king
+                            if (isKingInCheck(tempCol, tempRow)) {
+                                if (isKingInCheckmate(tempCol, tempRow)) {
+                                    pieceSprites[boardSize][1].setTexture(pieceTextures[13]);
+                                    window.draw(pieceSprites[boardSize][1]);
+                                    render();
+                                    isGameOver = true;
+                                } else {
+                                    pieceSprites[boardSize][0].setTexture(pieceTextures[12]);
+                                    window.draw(pieceSprites[boardSize][0]);
+                                    window.display();
+                                    tempRow = boardSize;
+                                    tempCol = boardSize;
+                                    isChecked = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            window.setTitle("White's Turn");
+            if (!isChecked) {
+                pieceSprites[boardSize][0] = sf::Sprite();  // Clear the previous sprite
+                pieceSprites[boardSize][0].setPosition(boardSize * squareSize, 0);
+                render();
             }
         }
     }
