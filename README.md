@@ -24,11 +24,7 @@ teet@teetsMacbook:~$ git clone https://github.com/jck1044/Chess-Playing-AI.git
 
 
 ```console
-teet@teetsMacbook:~$ cd Chess-Playing-AI/cmake-build-debug
-```
-
-```console
-teet@teetsMacbook:~$ cmake ..   
+teet@teetsMacbook:~$ cd Chess-Playing-AI
 ```
 
 ```console
@@ -36,5 +32,5 @@ teet@teetsMacbook:~$ make
 ```
 
 ```console
-teet@teetsMacbook:~$ ./Chess-Playing-AI 
+teet@teetsMacbook:~$ ./chess
 ```

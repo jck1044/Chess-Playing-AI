@@ -2,7 +2,6 @@
 #include <SFML/Window.hpp>
 #include <vector>
 
-
 struct MovePiece {
     int piece;
     int initRow = -1;
