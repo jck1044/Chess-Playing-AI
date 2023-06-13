@@ -8,6 +8,8 @@ teet@teetsMacbook:~$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.co
 ```console
 teet@teetsMacbook:~$ brew install git
 ```
+Hey teet whenever you want to try again. Open Terminal, and do everything below here. Hasan did exactly this and it worked
+
 
 ```console
 teet@teetsMacbook:~$ brew install sfml
