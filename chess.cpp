@@ -746,12 +746,13 @@ MovePiece iterativeDeepening(Node currentNode, int board[8][8]) {
     auto endTime = startTime + std::chrono::seconds(3);
 
     while (std::chrono::steady_clock::now() < endTime) {
-        MovePiece currentMove = miniMax(currentNode, depth, true, board, alpha, beta);
+        MovePiece currentMove = miniMax(currentNode, depth, false, board, alpha, beta);
         bestMove = currentMove;
 
         // If the search is complete, exit the loop
-        if (currentMove.score == INT16_MIN || currentMove.score == INT16_MAX)
+        if (currentMove.score == INT16_MIN || currentMove.score == INT16_MAX) {
             break;
+        }
 
         depth = depth + 2;
     }
