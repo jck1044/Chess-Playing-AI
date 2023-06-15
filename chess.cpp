@@ -650,69 +650,8 @@ void render(int board[8][8]) {
 static bool isPieceSelected = false;
 bool isGameOver = false;
 
-MovePiece playGreedyMove(int board[8][8]) {
-    MovePiece bestMove{};
-    int bestScore = INT16_MAX;
-    for (int initRow = boardSize - 1; initRow >= 0; initRow--) {
-        for (int initCol: favorCenter) {
-            if (board[initRow][initCol] < 0) {
-                for (int selectedRow = boardSize - 1; selectedRow >= 0; selectedRow--) {
-                    for (int selectedCol: favorCenter) {
-                        int isLegal = isMoveAllowed(initRow, initCol, selectedRow, selectedCol, board);
-                        if (isLegal == 1) {
-                            int tempChessboard[boardSize][boardSize];
-                            for (int i = 0; i < boardSize; i++) {
-                                for (int j = 0; j < boardSize; j++) {
-                                    tempChessboard[i][j] = board[i][j];
-                                }
-                            }
-                            if (selectedRow == 0 && board[selectedRow][selectedCol] == BLACKPAWN) { //promotion
-                                board[selectedRow][selectedCol] = BLACKQUEEN;
-                            } else {
-                                board[selectedRow][selectedCol] = board[initRow][initCol];
-                            }
-                            board[initRow][initCol] = 0;
-                            bool isMoveAllowed = true;
-                            for (int tempRow = 0; tempRow < boardSize; tempRow++) {
-                                for (int tempCol = 0; tempCol < boardSize; tempCol++) {
-                                    if ((curTurn == 1 && board[tempRow][tempCol] == 5) ||
-                                        (curTurn == 2 && board[tempRow][tempCol] == -5)) {// king
-                                        if (isKingInCheck(tempCol, tempRow, board)) {
-                                            isMoveAllowed = false;
-                                            tempRow = boardSize;
-                                            tempCol = boardSize;
-                                        }
-                                    }
-
-                                }
-                            }
-                            if (isMoveAllowed) {
-                                int score = getBoardEvaluation(board);
-                                if (score < bestScore) {
-                                    bestMove.initRow = initRow;
-                                    bestMove.initCol = initCol;
-                                    bestMove.newRow = selectedRow;
-                                    bestMove.newCol = selectedCol;
-                                    bestScore = score;
-                                }
-                            }
-                            for (int i = 0; i < boardSize; i++) {
-                                for (int j = 0; j < boardSize; j++) {
-                                    board[i][j] = tempChessboard[i][j];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return bestMove;
-}
-
-MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[8][8]) {
-    if (depth == 0) {
-        // Base case: reached maximum depth, evaluate the current position
+MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[8][8], int alpha, int beta) {
+    if (depth == 0) { // Base case: reached maximum depth, evaluate the current position
         MovePiece move;
         move.score = getBoardEvaluation(board);
         return move;
@@ -722,7 +661,6 @@ MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[
     } else {
         currentNode.bestChild.score = INT16_MAX;
     }
-
     for (int initRow = boardSize - 1; initRow >= 0; initRow--) {
         for (int initCol: favorCenter) {
             if ((currentNode.chessboard[initRow][initCol] < 0 && !currentNode.doesWhiteMoveFromHere) ||
@@ -731,8 +669,7 @@ MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[
                 for (int selectedRow = boardSize - 1; selectedRow >= 0; selectedRow--) {
                     for (int selectedCol: favorCenter) {
                         int isLegal = isMoveAllowed(initRow, initCol, selectedRow, selectedCol, board);
-                        if (isLegal == 1) {
-                            // Move is legal
+                        if (isLegal == 1) { // Move is legal
                             Node childNode = currentNode;  // Create a copy of the current node
                             MovePiece move;
                             move.initCol = initCol;
@@ -749,7 +686,6 @@ MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[
                                 childNode.chessboard[selectedRow][selectedCol] = childNode.chessboard[initRow][initCol];
                             }
                             childNode.chessboard[initRow][initCol] = 0;
-
                             // Check if the move puts the opponent's king in check
                             bool isMoveAllowed = true;
                             for (int tempRow = 0; tempRow < boardSize; tempRow++) {
@@ -768,19 +704,26 @@ MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[
                                     break;
                                 }
                             }
-
                             if (isMoveAllowed) {
                                 childNode.doesWhiteMoveFromHere = !currentNode.doesWhiteMoveFromHere;
-
                                 // Recursive call to evaluate the child node
                                 MovePiece childMove = miniMax(childNode, depth - 1, !maximizingPlayer,
-                                                              childNode.chessboard);
-
+                                                              childNode.chessboard, alpha, beta);
                                 // Update the best move based on the child's score
                                 if ((maximizingPlayer && childMove.score > currentNode.bestChild.score) ||
                                     (!maximizingPlayer && childMove.score < currentNode.bestChild.score)) {
                                     currentNode.bestChild = move;
                                     currentNode.bestChild.score = childMove.score;
+                                }
+                                // Update alpha and beta
+                                if (maximizingPlayer) {
+                                    alpha = std::max(alpha, currentNode.bestChild.score);
+                                } else {
+                                    beta = std::min(beta, currentNode.bestChild.score);
+                                }
+                                // Alpha-beta pruning
+                                if (beta <= alpha) {
+                                    break;  // Beta cutoff
                                 }
                             }
                         }
@@ -937,17 +880,13 @@ void handleEvents(int board[8][8]) {
                 rootNode.chessboard[i][j] = board[i][j];
             }
         }
-        MovePiece bestMove = miniMax(rootNode, 3, rootNode.doesWhiteMoveFromHere, board);
+        int alpha = INT_MIN;
+        int beta = INT_MAX;
+        MovePiece bestMove = miniMax(rootNode, 3, rootNode.doesWhiteMoveFromHere, board, alpha, beta);
         int selectedRow = bestMove.initRow;
         int selectedCol = bestMove.initCol;
         int row = bestMove.newRow;
         int col = bestMove.newCol;
-
-//        MovePiece greedyMove = miniMax2();
-//        int selectedRow = greedyMove.initRow;
-//        int selectedCol = greedyMove.initCol;
-//        int row = greedyMove.newRow;
-//        int col = greedyMove.newCol;
 
         if (selectedRow == -1) {
             pieceSprites[boardSize][1].setTexture(pieceTextures[13]);
