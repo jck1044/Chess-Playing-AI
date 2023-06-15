@@ -564,40 +564,76 @@ bool isKingInCheckmate(int kingX, int kingY, int board[8][8]) {
 
 int getBoardEvaluation(int board[8][8]) {
     int score = 0;
-    for (int row = 0; row < boardSize; row++) {
-        for (int col = 0; col < boardSize; col++) {
-            if (board[row][col] == WHITEPAWN) {
-                score++;
-            } else if (board[row][col] == BLACKPAWN) {
-                score--;
-            } else if (board[row][col] == WHITEKNIGHT || board[row][col] == WHITEBISHOP) {
-                score = score + 3;
-            } else if (board[row][col] == BLACKKNIGHT || board[row][col] == BLACKBISHOP) {
-                score = score - 3;
-            } else if (board[row][col] == WHITEROOK) {
-                score = score + 5;
-            } else if (board[row][col] == BLACKROOK) {
-                score = score - 5;
-            } else if (board[row][col] == WHITEQUEEN) {
-                score = score + 9;
-            } else if (board[row][col] == BLACKQUEEN) {
-                score = score - 9;
-            } else if (board[row][col] == BLACKKING) {
-                if (isKingInCheck(col, row, board)) {
-                    if (isKingInCheckmate(col, row, board)) {
-                        score = INT16_MIN;
-                    } else {
-                        score--;
-                    }
-                }
-            } else if (board[row][col] == WHITEKING) {
-                if (isKingInCheck(col, row, board)) {
-                    if (isKingInCheckmate(col, row, board)) {
-                        score = INT16_MAX;
-                    } else {
-                        score++;
-                    }
-                }
+
+    // Piece values
+    int pawnValue = 1;
+    int knightValue = 3;
+    int bishopValue = 3;
+    int rookValue = 5;
+    int queenValue = 9;
+    // Evaluate king position
+    int whiteKingRow = -1;
+    int whiteKingCol = -1;
+    int blackKingRow = -1;
+    int blackKingCol = -1;
+
+    for (int row = 0; row < 8; row++) {
+        for (int col = 0; col < 8; col++) {
+            int piece = board[row][col];
+            if (piece == WHITEPAWN) {
+                score += pawnValue;
+            } else if (piece == BLACKPAWN) {
+                score -= pawnValue;
+            } else if (piece == WHITEKNIGHT) {
+                score += knightValue;
+            } else if (piece == BLACKKNIGHT) {
+                score -= knightValue;
+            } else if (piece == WHITEBISHOP) {
+                score += bishopValue;
+            } else if (piece == BLACKBISHOP) {
+                score -= bishopValue;
+            } else if (piece == WHITEROOK) {
+                score += rookValue;
+            } else if (piece == BLACKROOK) {
+                score -= rookValue;
+            } else if (piece == WHITEQUEEN) {
+                score += queenValue;
+            } else if (piece == BLACKQUEEN) {
+                score -= queenValue;
+            } else if (piece == WHITEKING) {
+                whiteKingRow = row;
+            } else if (piece == BLACKKING) {
+                blackKingRow = row;
+            }
+        }
+    }
+    // King safety and position weights
+    int kingSafetyWeight = 1;
+    int kingPositionWeight = 1;
+    // Evaluate white king position
+    if (blackKingRow > 0) {
+        // Add positional bonuses for the white king
+        score += kingPositionWeight * blackKingRow;
+        // Check king safety and penalize if it's in check or checkmate
+        if (isKingInCheck(blackKingCol, blackKingRow, board)) {
+            if (isKingInCheckmate(blackKingCol, blackKingRow, board)) {
+                score = INT16_MAX; // Checkmate, assign the lowest score possible
+            } else {
+                score += kingSafetyWeight; // King is in check, penalize the score
+            }
+        }
+    }
+    // Evaluate black king position
+    if (whiteKingRow < 7) {
+        // Add positional bonuses for the black king
+        score -= kingPositionWeight * (7 - whiteKingRow);
+
+        // Check king safety and penalize if it's in check or checkmate
+        if (isKingInCheck(whiteKingCol, whiteKingRow, board)) {
+            if (isKingInCheckmate(whiteKingCol, whiteKingRow, board)) {
+                score = INT16_MIN; // Checkmate, assign the highest score possible
+            } else {
+                score -= kingSafetyWeight; // King is in check, penalize the score
             }
         }
     }
@@ -674,7 +710,7 @@ MovePiece playGreedyMove(int board[8][8]) {
     return bestMove;
 }
 
-MovePiece miniMax2(Node currentNode, int depth, bool maximizingPlayer, int board[8][8]) {
+MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[8][8]) {
     if (depth == 0) {
         // Base case: reached maximum depth, evaluate the current position
         MovePiece move;
@@ -737,8 +773,8 @@ MovePiece miniMax2(Node currentNode, int depth, bool maximizingPlayer, int board
                                 childNode.doesWhiteMoveFromHere = !currentNode.doesWhiteMoveFromHere;
 
                                 // Recursive call to evaluate the child node
-                                MovePiece childMove = miniMax2(childNode, depth - 1, !maximizingPlayer,
-                                                               childNode.chessboard);
+                                MovePiece childMove = miniMax(childNode, depth - 1, !maximizingPlayer,
+                                                              childNode.chessboard);
 
                                 // Update the best move based on the child's score
                                 if ((maximizingPlayer && childMove.score > currentNode.bestChild.score) ||
@@ -901,7 +937,7 @@ void handleEvents(int board[8][8]) {
                 rootNode.chessboard[i][j] = board[i][j];
             }
         }
-        MovePiece bestMove = miniMax2(rootNode, 3, rootNode.doesWhiteMoveFromHere, board);
+        MovePiece bestMove = miniMax(rootNode, 3, rootNode.doesWhiteMoveFromHere, board);
         int selectedRow = bestMove.initRow;
         int selectedCol = bestMove.initCol;
         int row = bestMove.newRow;
