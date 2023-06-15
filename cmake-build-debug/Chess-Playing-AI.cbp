@@ -5,7 +5,7 @@
 		<Option title="Chess-Playing-AI"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\local\;CMake Files\..\..\..\..\usr\local\lib\;CMake Files\..\..\..\..\usr\local\lib\cmake\;CMake Files\..\..\..\..\usr\local\lib\cmake\SFML\;"/>
+		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug"/>
@@ -85,21 +85,6 @@
 		</Unit>
 		<Unit filename="/Users/jaredking/Desktop/Chess-Playing-AI/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
-		</Unit>
-		<Unit filename="/Users/jaredking/Desktop/Chess-Playing-AI/../../../../usr/local/lib/cmake/SFML/SFMLConfig.cmake">
-			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\SFML\"/>
-		</Unit>
-		<Unit filename="/Users/jaredking/Desktop/Chess-Playing-AI/../../../../usr/local/lib/cmake/SFML/SFMLConfigDependencies.cmake">
-			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\SFML\"/>
-		</Unit>
-		<Unit filename="/Users/jaredking/Desktop/Chess-Playing-AI/../../../../usr/local/lib/cmake/SFML/SFMLConfigVersion.cmake">
-			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\SFML\"/>
-		</Unit>
-		<Unit filename="/Users/jaredking/Desktop/Chess-Playing-AI/../../../../usr/local/lib/cmake/SFML/SFMLSharedTargets-release.cmake">
-			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\SFML\"/>
-		</Unit>
-		<Unit filename="/Users/jaredking/Desktop/Chess-Playing-AI/../../../../usr/local/lib/cmake/SFML/SFMLSharedTargets.cmake">
-			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\SFML\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>

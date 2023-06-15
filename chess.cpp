@@ -736,7 +736,6 @@ MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[
     return currentNode.bestChild;
 }
 
-
 MovePiece iterativeDeepening(Node currentNode, int board[8][8]) {
     int alpha = INT_MIN;
     int beta = INT_MAX;
@@ -744,23 +743,18 @@ MovePiece iterativeDeepening(Node currentNode, int board[8][8]) {
     int depth = 1;
     auto startTime = std::chrono::steady_clock::now();
     auto endTime = startTime + std::chrono::seconds(3);
-
     while (std::chrono::steady_clock::now() < endTime) {
         MovePiece currentMove = miniMax(currentNode, depth, false, board, alpha, beta);
         bestMove = currentMove;
-
         // If the search is complete, exit the loop
         if (currentMove.score == INT16_MIN || currentMove.score == INT16_MAX) {
             break;
         }
-
         depth = depth + 2;
     }
     cout << "I explored to a depth of " << depth - 2  << " before I got impatient" << endl;
-
     return bestMove;
 }
-
 
 void handleEvents(int board[8][8]) {
     if (curTurn == 1) {

@@ -2,20 +2,6 @@
 Hi Teet, check out my PvP version of my chess app, before AI. There is en passants, or castleing. Heres how to get it to work (on Mac). Open Terminal and put the following commands in there:
 
 ```console
-teet@teetsMacbook:~$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-```console
-teet@teetsMacbook:~$ brew install git
-```
-Hey teet whenever you want to try again. Open Terminal, and do everything below here. Hasan did exactly this and it worked
-
-
-```console
-teet@teetsMacbook:~$ brew install sfml
-```
-
-```console
 teet@teetsMacbook:~$ cd Desktop
 ```
 
@@ -26,7 +12,11 @@ teet@teetsMacbook:~$ git clone https://github.com/jck1044/Chess-Playing-AI.git
 
 
 ```console
-teet@teetsMacbook:~$ cd Chess-Playing-AI
+teet@teetsMacbook:~$ cd Chess-Playing-AI/cmake-build-debug
+```
+
+```console
+teet@teetsMacbook:~$ cmake ..  
 ```
 
 ```console
@@ -34,5 +24,5 @@ teet@teetsMacbook:~$ make
 ```
 
 ```console
-teet@teetsMacbook:~$ ./chess
+teet@teetsMacbook:~$ ./Chess-Playing-AI
 ```

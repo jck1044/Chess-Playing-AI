@@ -92,11 +92,9 @@ Chess__Playing__AI_EXTERNAL_OBJECTS =
 
 Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o
 Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/build.make
-Chess-Playing-AI: /usr/local/lib/libsfml-graphics.2.5.1.dylib
-Chess-Playing-AI: /usr/local/lib/libsfml-audio.2.5.1.dylib
-Chess-Playing-AI: /usr/local/lib/libsfml-network.2.5.1.dylib
-Chess-Playing-AI: /usr/local/lib/libsfml-window.2.5.1.dylib
-Chess-Playing-AI: /usr/local/lib/libsfml-system.2.5.1.dylib
+Chess-Playing-AI: /usr/local/lib/libsfml-graphics.dylib
+Chess-Playing-AI: /usr/local/lib/libsfml-window.dylib
+Chess-Playing-AI: /usr/local/lib/libsfml-system.dylib
 Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable Chess-Playing-AI"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Chess-Playing-AI.dir/link.txt --verbose=$(VERBOSE)

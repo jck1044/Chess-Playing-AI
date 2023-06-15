@@ -4,7 +4,7 @@
 # compile CXX with /Library/Developer/CommandLineTools/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -isystem /usr/local/include
+CXX_INCLUDES = -I/usr/local/include
 
 CXX_FLAGS = -g -std=gnu++17 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fcolor-diagnostics
 

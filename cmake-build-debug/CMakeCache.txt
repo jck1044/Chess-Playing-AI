@@ -239,6 +239,15 @@ SFML_DIR:PATH=/usr/local/lib/cmake/SFML
 //Path to a file.
 SFML_DOC_DIR:PATH=SFML_DOC_DIR-NOTFOUND
 
+//Path to a library.
+SFML_GRAPHICS:FILEPATH=/usr/local/lib/libsfml-graphics.dylib
+
+//Path to a library.
+SFML_SYSTEM:FILEPATH=/usr/local/lib/libsfml-system.dylib
+
+//Path to a library.
+SFML_WINDOW:FILEPATH=/usr/local/lib/libsfml-window.dylib
+
 //Value Computed by CMake
 temp_BINARY_DIR:STATIC=/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug
 
