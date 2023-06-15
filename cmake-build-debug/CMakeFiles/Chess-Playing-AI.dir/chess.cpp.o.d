@@ -302,4 +302,6 @@ CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o: \
   /usr/local/include/SFML/Graphics/Glsl.inl \
   /usr/local/include/SFML/Graphics/Sprite.hpp \
   /usr/local/include/SFML/Graphics/Text.hpp \
-  /usr/local/include/SFML/Graphics/VertexBuffer.hpp
+  /usr/local/include/SFML/Graphics/VertexBuffer.hpp \
+  /Library/Developer/CommandLineTools/usr/bin/../include/c++/v1/iostream \
+  /Library/Developer/CommandLineTools/usr/bin/../include/c++/v1/istream

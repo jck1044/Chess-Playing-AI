@@ -305,8 +305,12 @@ CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o: /Users/jaredking/Desktop/Chess-Play
   /usr/local/include/SFML/Graphics/Glsl.inl \
   /usr/local/include/SFML/Graphics/Sprite.hpp \
   /usr/local/include/SFML/Graphics/Text.hpp \
-  /usr/local/include/SFML/Graphics/VertexBuffer.hpp
+  /usr/local/include/SFML/Graphics/VertexBuffer.hpp \
+  /Library/Developer/CommandLineTools/usr/include/c++/v1/iostream \
+  /Library/Developer/CommandLineTools/usr/include/c++/v1/istream
 
+
+/Library/Developer/CommandLineTools/usr/include/c++/v1/iostream:
 
 /usr/local/include/SFML/Graphics/VertexBuffer.hpp:
 
@@ -847,6 +851,8 @@ CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o: /Users/jaredking/Desktop/Chess-Play
 /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk/usr/include/AvailabilityVersions.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk/usr/include/machine/_types.h:
+
+/Library/Developer/CommandLineTools/usr/include/c++/v1/istream:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk/usr/include/sys/_types/_uintptr_t.h:
 
