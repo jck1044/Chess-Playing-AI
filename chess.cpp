@@ -2,7 +2,6 @@
 #include <SFML/Window.hpp>
 #include <vector>
 #include <iostream>
-#include <vector>
 #include <chrono>
 
 using namespace std;
@@ -650,8 +649,15 @@ void render(int board[8][8]) {
 
 static bool isPieceSelected = false;
 bool isGameOver = false;
+std::chrono::time_point<std::chrono::steady_clock> startTime;
+std::chrono::time_point<std::chrono::steady_clock> endTime;
 
 MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[8][8], int alpha, int beta) {
+    if (std::chrono::steady_clock::now() > endTime) {
+        MovePiece outOfTime;
+        outOfTime.initRow = -69;
+        return outOfTime;
+    }
     if (depth == 0) { // Base case: reached maximum depth, evaluate the current position
         MovePiece move;
         move.score = getBoardEvaluation(board);
@@ -710,6 +716,9 @@ MovePiece miniMax(Node currentNode, int depth, bool maximizingPlayer, int board[
                                 // Recursive call to evaluate the child node
                                 MovePiece childMove = miniMax(childNode, depth - 1, !maximizingPlayer,
                                                               childNode.chessboard, alpha, beta);
+                                if (childMove.initRow == -69) {
+                                    return childMove;
+                                }
                                 // Update the best move based on the child's score
                                 if ((maximizingPlayer && childMove.score > currentNode.bestChild.score) ||
                                     (!maximizingPlayer && childMove.score < currentNode.bestChild.score)) {
@@ -741,18 +750,22 @@ MovePiece iterativeDeepening(Node currentNode, int board[8][8]) {
     int beta = INT_MAX;
     MovePiece bestMove;
     int depth = 1;
-    auto startTime = std::chrono::steady_clock::now();
-    auto endTime = startTime + std::chrono::seconds(3);
+    startTime = std::chrono::steady_clock::now();
+    endTime = startTime + std::chrono::seconds(5);
     while (std::chrono::steady_clock::now() < endTime) {
         MovePiece currentMove = miniMax(currentNode, depth, false, board, alpha, beta);
-        bestMove = currentMove;
+        if (currentMove.initRow != -69) {
+            bestMove = currentMove;
+        } else {
+            int debug = 0;
+        }
         // If the search is complete, exit the loop
         if (currentMove.score == INT16_MIN || currentMove.score == INT16_MAX) {
             break;
         }
         depth = depth + 2;
     }
-    cout << "I explored to a depth of " << depth - 2  << " before I got impatient" << endl;
+    cout << "I explored to a depth of " << depth - 2 << " before I got impatient" << endl;
     return bestMove;
 }
 
