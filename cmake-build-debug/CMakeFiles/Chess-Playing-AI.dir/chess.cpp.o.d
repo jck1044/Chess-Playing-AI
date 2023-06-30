@@ -1,5 +1,6 @@
 CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o: \
   /Users/jaredking/Desktop/Chess-Playing-AI/chess.cpp \
+  /Users/jaredking/Desktop/Chess-Playing-AI/chess.h \
   /usr/local/include/SFML/Graphics.hpp \
   /usr/local/include/SFML/Window.hpp /usr/local/include/SFML/System.hpp \
   /usr/local/include/SFML/Config.hpp \
@@ -304,4 +305,6 @@ CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o: \
   /usr/local/include/SFML/Graphics/Text.hpp \
   /usr/local/include/SFML/Graphics/VertexBuffer.hpp \
   /Library/Developer/CommandLineTools/usr/bin/../include/c++/v1/iostream \
-  /Library/Developer/CommandLineTools/usr/bin/../include/c++/v1/istream
+  /Library/Developer/CommandLineTools/usr/bin/../include/c++/v1/istream \
+  /Users/jaredking/Desktop/Chess-Playing-AI/gui.cpp \
+  /Users/jaredking/Desktop/Chess-Playing-AI/gameplay.cpp
