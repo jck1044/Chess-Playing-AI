@@ -65,11 +65,21 @@ uint64_t getKingMoves(uint64_t king) {
 ChessState applyMove(const ChessState &state, Move move) {
     ChessState newState = state;
     int from = move.getFrom(), to = move.getTo();
-    int color = (state.isWhiteToMove ? 0 : 1); // Correct mapping: white->0, black->1
+    int color = (state.isWhiteToMove ? 0 : 1); // white->0, black->1
+    int enemy = !color;
 
+    // Remove enemy piece on the destination square, if any.
+    for (int i = 0; i < 6; i++) {
+        if (newState.pieces[i][enemy] & (1ULL << to)) {
+            newState.pieces[i][enemy] &= ~(1ULL << to);
+            break;
+        }
+    }
+
+    // Move the piece for the current player.
     for (int i = 0; i < 6; i++) {
         if (newState.pieces[i][color] & (1ULL << from)) {
-            newState.pieces[i][color] ^= (1ULL << from);
+            newState.pieces[i][color] &= ~(1ULL << from);
             newState.pieces[i][color] |= (1ULL << to);
             break;
         }
@@ -78,6 +88,7 @@ ChessState applyMove(const ChessState &state, Move move) {
     newState.isWhiteToMove = !state.isWhiteToMove;
     return newState;
 }
+
 
 
 // ========== Generate Legal Moves ==========
