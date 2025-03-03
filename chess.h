@@ -32,10 +32,10 @@ enum PieceType {
 struct ChessState {
     uint64_t pieces[6][2]; // 6 piece types, 2 colors
     uint8_t castlingRights; // 4 bits (KQkq)
-    uint8_t enPassantFile;  // 6 bits (0-7 if available, 255 if none)
+    uint8_t enPassantFile; // 6 bits (0-7 if available, 255 if none)
     uint16_t halfmoveClock; // 50-move rule
     uint16_t fullmoveCount; // Move counter
-    bool isWhiteToMove;     // 1 bit
+    bool isWhiteToMove; // 1 bit
 
     ChessState() {
         for (int i = 0; i < 6; i++) {
@@ -70,16 +70,26 @@ extern sf::Texture pieceTextures[15];
 extern sf::Texture highlightTextures[12];
 extern sf::Sprite pieceSprites[boardSize + 1][boardSize];
 sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
+
 // ========== Function Declarations (No Definitions Here) ==========
 void loadTextures();
+
 void createSprites();
+
 void render(int board[8][8]);
+
 void bitboardToArray(const ChessState &state, int board[8][8]);
+
 int evaluate(const ChessState &state);
+
 Move miniMax(ChessState &state, int depth, int alpha, int beta, bool maximizingPlayer);
+
 Move iterativeDeepening(ChessState &state);
+
 ChessState applyMove(const ChessState &state, Move move);
+
 vector<Move> generateMoves(const ChessState &state);
+
 void handleEvents();
 
 #endif // CHESS_H

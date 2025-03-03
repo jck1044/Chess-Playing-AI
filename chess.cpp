@@ -4,7 +4,7 @@
 #include <iostream>
 
 // Global game state variables
-int curTurn = 1;  // 1 = White, 2 = Black
+int curTurn = 1; // 1 = White, 2 = Black
 bool isGameOver = false;
 
 // SFML window instance
@@ -41,7 +41,7 @@ void handleEvents() {
                     int col = mousePosition.x / squareSize;
                     int row = mousePosition.y / squareSize;
                     std::cout << "Mouse click at pixel (" << mousePosition.x << ", " << mousePosition.y
-                              << ") mapped to board (" << row << ", " << col << ")\n";
+                            << ") mapped to board (" << row << ", " << col << ")\n";
 
                     static sf::Vector2i selectedPiecePosition;
                     static bool isPieceSelected = false;
@@ -59,15 +59,15 @@ void handleEvents() {
                         int from = (7 - selectedRow) * 8 + selectedCol;
                         int to = (7 - row) * 8 + col;
                         std::cout << "Attempting move from board (" << selectedRow << ", " << selectedCol
-                                  << ") [bit index " << from << "] to board (" << row << ", " << col
-                                  << ") [bit index " << to << "]\n";
+                                << ") [bit index " << from << "] to board (" << row << ", " << col
+                                << ") [bit index " << to << "]\n";
 
                         Move move(from, to);
 
                         // Validate the move against generated legal moves.
                         vector<Move> legalMoves = generateMoves(boardState);
                         bool legal = false;
-                        for (const auto &m : legalMoves) {
+                        for (const auto &m: legalMoves) {
                             if (m.getFrom() == move.getFrom() && m.getTo() == move.getTo()) {
                                 legal = true;
                                 break;
@@ -75,7 +75,7 @@ void handleEvents() {
                         }
                         if (!legal) {
                             std::cout << "Illegal move attempted: from " << move.getFrom()
-                                      << " to " << move.getTo() << "\n";
+                                    << " to " << move.getTo() << "\n";
                             isPieceSelected = false; // Reset selection
                             continue; // Ignore the move
                         }
@@ -89,7 +89,7 @@ void handleEvents() {
                             std::cout << "AI's turn. Starting iterative deepening search...\n";
                             Move aiMove = iterativeDeepening(boardState);
                             std::cout << "AI move: from " << aiMove.getFrom() << " to "
-                                      << aiMove.getTo() << " with special " << aiMove.getSpecial() << "\n";
+                                    << aiMove.getTo() << " with special " << aiMove.getSpecial() << "\n";
                             boardState = applyMove(boardState, aiMove);
                             std::cout << "AI move applied. Resetting turn to white.\n";
                             curTurn = 1;

@@ -159,7 +159,7 @@ vector<Move> generateMoves(const ChessState &state) {
 
     // ===== Bishop Moves (Diagonals) =====
     uint64_t bishops = state.pieces[2][color];
-    int bishopDirs[4][2] = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+    int bishopDirs[4][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
     while (bishops) {
         int from = __builtin_ctzll(bishops);
         int rank = from / 8;
@@ -177,7 +177,8 @@ vector<Move> generateMoves(const ChessState &state) {
                 } else if (enemyOccupancy & (1ULL << to)) {
                     moves.emplace_back(from, to);
                     break;
-                } else { // Friendly piece encountered.
+                } else {
+                    // Friendly piece encountered.
                     break;
                 }
             }
@@ -187,7 +188,7 @@ vector<Move> generateMoves(const ChessState &state) {
 
     // ===== Rook Moves (Vertical & Horizontal) =====
     uint64_t rooks = state.pieces[0][color];
-    int rookDirs[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+    int rookDirs[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
     while (rooks) {
         int from = __builtin_ctzll(rooks);
         int rank = from / 8;
@@ -215,8 +216,10 @@ vector<Move> generateMoves(const ChessState &state) {
 
     // ===== Queen Moves (Rook + Bishop Directions) =====
     uint64_t queens = state.pieces[3][color];
-    int queenDirs[8][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1},
-                            {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+    int queenDirs[8][2] = {
+        {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+        {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+    };
     while (queens) {
         int from = __builtin_ctzll(queens);
         int rank = from / 8;
@@ -342,4 +345,3 @@ void bitboardToArray(const ChessState &state, int board[8][8]) {
         }
     }
 }
-
