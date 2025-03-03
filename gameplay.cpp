@@ -270,38 +270,114 @@ vector<Move> generateMoves(const ChessState &state) {
     return moves;
 }
 
-// ========== Minimax Algorithm ==========
+// ---------------------------------------------------------------------
+// New: Transposition Table Definitions
+// ---------------------------------------------------------------------
+enum TTFlag { EXACT, LOWERBOUND, UPPERBOUND };
+
+struct TTEntry {
+    int eval;       // Evaluation of the position
+    int depth;      // Remaining search depth at which this was computed
+    TTFlag flag;    // The type of bound this evaluation represents
+    Move bestMove;  // The best move found from this position
+};
+
+// Global transposition table (can be cleared or resized as needed)
+static std::unordered_map<uint64_t, TTEntry> transpositionTable;
+
+// ---------------------------------------------------------------------
+// New: Compute a hash for the ChessState using FNV–1a hash algorithm
+// ---------------------------------------------------------------------
+uint64_t computeHash(const ChessState &state) {
+    uint64_t hash = 1469598103934665603ULL; // FNV offset basis
+    auto hashCombine = [&hash](uint64_t data) {
+        hash ^= data;
+        hash *= 1099511628211ULL;  // FNV prime
+    };
+
+    for (int piece = 0; piece < 6; piece++) {
+        hashCombine(state.pieces[piece][0]);
+        hashCombine(state.pieces[piece][1]);
+    }
+    hashCombine(state.castlingRights);
+    hashCombine(state.enPassantFile);
+    hashCombine(state.halfmoveClock);
+    hashCombine(state.fullmoveCount);
+    hashCombine(state.isWhiteToMove ? 1ULL : 0ULL);
+    return hash;
+}
+
+// ---------------------------------------------------------------------
+// Updated minimax function with transposition table and alpha-beta
+// ---------------------------------------------------------------------
 Move miniMax(const ChessState &state, int depth, int alpha, int beta, bool maximizingPlayer) {
+    // Base case: return evaluation in the special field of Move
     if (depth == 0) {
         return Move(0, 0, evaluate(state));
     }
 
-    Move bestMove(0, 0);
-    if (maximizingPlayer) {
-        int maxEval = -999999;
-        for (Move move: generateMoves(state)) {
-            ChessState newState = applyMove(state, move);
-            int eval = miniMax(newState, depth - 1, alpha, beta, false).getSpecial();
-            if (eval > maxEval) {
-                maxEval = eval;
-                bestMove = move;
+    // Save original alpha and beta for flag determination later
+    int originalAlpha = alpha;
+    int originalBeta = beta;
+
+    // Compute hash key for the current state
+    uint64_t hash = computeHash(state);
+
+    // Check if this state was already evaluated to at least this depth
+    if (transpositionTable.find(hash) != transpositionTable.end()) {
+        TTEntry entry = transpositionTable[hash];
+        if (entry.depth >= depth) {
+            if (entry.flag == EXACT) {
+                return entry.bestMove;
+            } else if (entry.flag == LOWERBOUND) {
+                alpha = std::max(alpha, entry.eval);
+            } else if (entry.flag == UPPERBOUND) {
+                beta = std::min(beta, entry.eval);
             }
-            alpha = max(alpha, eval);
-            if (beta <= alpha) break;
-        }
-    } else {
-        int minEval = 999999;
-        for (Move move: generateMoves(state)) {
-            ChessState newState = applyMove(state, move);
-            int eval = miniMax(newState, depth - 1, alpha, beta, true).getSpecial();
-            if (eval < minEval) {
-                minEval = eval;
-                bestMove = move;
+            if (alpha >= beta) {
+                return entry.bestMove;
             }
-            beta = min(beta, eval);
-            if (beta <= alpha) break;
         }
     }
+
+    Move bestMove(0, 0);
+    // Initialize bestEval to a very low or very high value depending on player
+    int bestEval = maximizingPlayer ? -999999 : 999999;
+
+    // Generate moves and search recursively
+    vector<Move> moves = generateMoves(state);
+    for (Move move : moves) {
+        ChessState newState = applyMove(state, move);
+        int eval = miniMax(newState, depth - 1, alpha, beta, !maximizingPlayer).getSpecial();
+        if (maximizingPlayer) {
+            if (eval > bestEval) {
+                bestEval = eval;
+                bestMove = move;
+            }
+            alpha = std::max(alpha, eval);
+        } else {
+            if (eval < bestEval) {
+                bestEval = eval;
+                bestMove = move;
+            }
+            beta = std::min(beta, eval);
+        }
+        if (alpha >= beta) break;
+    }
+
+    // Determine TT flag based on the final bounds
+    TTFlag flag;
+    if (bestEval <= originalAlpha) {
+        flag = UPPERBOUND;
+    } else if (bestEval >= originalBeta) {
+        flag = LOWERBOUND;
+    } else {
+        flag = EXACT;
+    }
+
+    // Store the computed result in the transposition table
+    transpositionTable[hash] = { bestEval, depth, flag, bestMove };
+
     return bestMove;
 }
 

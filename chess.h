@@ -3,8 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <iostream>
 #include <cstdint>
+#include "chess.h"
+#include <unordered_map>
 
 using namespace std;
 
