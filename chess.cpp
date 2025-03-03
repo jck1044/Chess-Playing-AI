@@ -12,7 +12,8 @@ ChessState boardState;
 
 // Keep only function implementations
 int evaluate(const ChessState &state) {
-    const int pieceValues[6] = {100, 300, 320, 500, 900, 10000};
+    // Mapping: index 0=Rook, 1=Knight, 2=Bishop, 3=Queen, 4=King, 5=Pawn.
+    const int pieceValues[6] = {500, 300, 320, 900, 10000, 100};
     int score = 0;
 
     for (int i = 0; i < 6; i++) {
@@ -22,6 +23,7 @@ int evaluate(const ChessState &state) {
 
     return state.isWhiteToMove ? score : -score;
 }
+
 
 void handleEvents() {
     int board[8][8];
