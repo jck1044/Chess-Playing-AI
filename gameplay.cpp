@@ -24,24 +24,19 @@ uint64_t getPawnMoves(uint64_t pawn, uint64_t emptySquares, bool isWhite) {
 // ========== Generate Knight Moves ==========
 uint64_t getKnightMoves(uint64_t knights) {
     uint64_t moves = 0;
+    const uint64_t notAFile  = 0xfefefefefefefefeULL;
+    const uint64_t notHFile  = 0x7f7f7f7f7f7f7f7fULL;
+    const uint64_t notABFile = 0xfcfcfcfcfcfcfcfcULL;
+    const uint64_t notGHFile = 0x3f3f3f3f3f3f3f3fULL;
 
-    // Knight movement bitmasks
-    uint64_t temp = (knights << 15) & 0xFEFEFEFEFEFEFEFE;
-    moves |= temp;
-    temp = (knights << 17) & 0x7F7F7F7F7F7F7F7F;
-    moves |= temp;
-    temp = (knights << 6) & 0xFCFCFCFCFCFCFCFC;
-    moves |= temp;
-    temp = (knights << 10) & 0x3F3F3F3F3F3F3F3F;
-    moves |= temp;
-    temp = (knights >> 15) & 0x7F7F7F7F7F7F7F7F;
-    moves |= temp;
-    temp = (knights >> 17) & 0xFEFEFEFEFEFEFEFE;
-    moves |= temp;
-    temp = (knights >> 6) & 0x3F3F3F3F3F3F3F3F;
-    moves |= temp;
-    temp = (knights >> 10) & 0xFCFCFCFCFCFCFCFC;
-    moves |= temp;
+    moves |= (knights << 17) & notAFile;    // 2 up, 1 right
+    moves |= (knights << 15) & notHFile;      // 2 up, 1 left
+    moves |= (knights << 10) & notABFile;     // 1 up, 2 right
+    moves |= (knights << 6)  & notGHFile;     // 1 up, 2 left
+    moves |= (knights >> 17) & notHFile;      // 2 down, 1 left
+    moves |= (knights >> 15) & notAFile;      // 2 down, 1 right
+    moves |= (knights >> 10) & notGHFile;     // 1 down, 2 left
+    moves |= (knights >> 6)  & notABFile;     // 1 down, 2 right
 
     return moves;
 }
