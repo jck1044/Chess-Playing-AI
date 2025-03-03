@@ -1,3 +1,11 @@
+#include "chess.h"
+
+// Define textures and sprites
+sf::Texture pieceTextures[15];
+sf::Texture highlightTextures[12];
+sf::Sprite pieceSprites[boardSize + 1][boardSize];
+
+// ========== Load Textures for Chess Pieces ==========
 void loadTextures() {
     pieceTextures[0].loadFromFile("piecePics/whiteRook.png");
     pieceTextures[1].loadFromFile("piecePics/whiteKnight.png");
@@ -29,31 +37,23 @@ void loadTextures() {
     highlightTextures[11].loadFromFile("piecePics/blackPawnHighlight.png");
 }
 
-void createSprites(int board[8][8]) {
+// ========== Create Sprites for Board and Pieces ==========
+void createSprites() {
     for (int i = 0; i < boardSize; i++) {
         for (int j = 0; j < boardSize; j++) {
-            if (board[i][j] != 0) {
-                int pieceIndex = board[i][j];
-                if (pieceIndex < 0) {
-                    pieceIndex = ((pieceIndex + 1) * -1) + 6;
-                } else {
-                    pieceIndex = pieceIndex - 1;
-                }
-                pieceSprites[i][j].setTexture(pieceTextures[pieceIndex]);
-                pieceSprites[i][j].setPosition(j * squareSize, i * squareSize);
-            }
+            pieceSprites[i][j] = sf::Sprite();
         }
     }
-    pieceSprites[boardSize][0].setPosition(boardSize * squareSize, 0 * squareSize);
+    pieceSprites[boardSize][0].setPosition(boardSize * squareSize, 0);
     pieceSprites[boardSize][1].setPosition(boardSize * squareSize, 1 * squareSize);
     pieceSprites[boardSize][2].setPosition(boardSize * squareSize, 2 * squareSize);
-
 }
 
+// ========== Draw the Chess Board ==========
 void drawBoard() {
-    // Draw the background
     background.setFillColor(sf::Color(232, 173, 115));
     window.draw(background);
+
     sf::RectangleShape boardSquare(sf::Vector2f(squareSize, squareSize));
     for (int i = 0; i < boardSize; ++i) {
         for (int j = 0; j < boardSize; ++j) {
@@ -62,25 +62,34 @@ void drawBoard() {
             } else {
                 boardSquare.setFillColor(sf::Color(209, 139, 71));
             }
-            boardSquare.setPosition(i * squareSize, j * squareSize);
+            boardSquare.setPosition(j * squareSize, i * squareSize);
             window.draw(boardSquare);
         }
     }
 }
 
+// ========== Draw Pieces on the Board ==========
 void drawPieces(int board[8][8]) {
     for (int i = 0; i < boardSize; ++i) {
         for (int j = 0; j < boardSize; ++j) {
             if (board[i][j] != 0) {
+                int pieceIndex = abs(board[i][j]) - 1;
+                if (board[i][j] < 0) {
+                    pieceIndex += 6; // Offset for black pieces
+                }
+                pieceSprites[i][j].setTexture(pieceTextures[pieceIndex]);
+                pieceSprites[i][j].setPosition(j * squareSize, i * squareSize);
                 window.draw(pieceSprites[i][j]);
             }
         }
     }
+    // Draw extra indicators for check/checkmate/draw
     window.draw(pieceSprites[boardSize][0]);
     window.draw(pieceSprites[boardSize][1]);
     window.draw(pieceSprites[boardSize][2]);
 }
 
+// ========== Render the GUI ==========
 void render(int board[8][8]) {
     window.clear(sf::Color::White);
     drawBoard();
