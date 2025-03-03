@@ -9,6 +9,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/jaredking/Desktop/Chess-Playing-AI/chess.cpp" "CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o" "gcc" "CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o.d"
+  "/Users/jaredking/Desktop/Chess-Playing-AI/gameplay.cpp" "CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o" "gcc" "CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o.d"
+  "/Users/jaredking/Desktop/Chess-Playing-AI/gui.cpp" "CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o" "gcc" "CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o.d"
+  "/Users/jaredking/Desktop/Chess-Playing-AI/test.cpp" "CMakeFiles/Chess-Playing-AI.dir/test.cpp.o" "gcc" "CMakeFiles/Chess-Playing-AI.dir/test.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

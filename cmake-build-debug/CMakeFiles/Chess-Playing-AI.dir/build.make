@@ -83,20 +83,68 @@ CMakeFiles/Chess-Playing-AI.dir/chess.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Chess-Playing-AI.dir/chess.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jaredking/Desktop/Chess-Playing-AI/chess.cpp -o CMakeFiles/Chess-Playing-AI.dir/chess.cpp.s
 
+CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o: CMakeFiles/Chess-Playing-AI.dir/flags.make
+CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o: /Users/jaredking/Desktop/Chess-Playing-AI/gameplay.cpp
+CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o: CMakeFiles/Chess-Playing-AI.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o -MF CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o.d -o CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o -c /Users/jaredking/Desktop/Chess-Playing-AI/gameplay.cpp
+
+CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jaredking/Desktop/Chess-Playing-AI/gameplay.cpp > CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.i
+
+CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jaredking/Desktop/Chess-Playing-AI/gameplay.cpp -o CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.s
+
+CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o: CMakeFiles/Chess-Playing-AI.dir/flags.make
+CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o: /Users/jaredking/Desktop/Chess-Playing-AI/gui.cpp
+CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o: CMakeFiles/Chess-Playing-AI.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o -MF CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o.d -o CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o -c /Users/jaredking/Desktop/Chess-Playing-AI/gui.cpp
+
+CMakeFiles/Chess-Playing-AI.dir/gui.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Chess-Playing-AI.dir/gui.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jaredking/Desktop/Chess-Playing-AI/gui.cpp > CMakeFiles/Chess-Playing-AI.dir/gui.cpp.i
+
+CMakeFiles/Chess-Playing-AI.dir/gui.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Chess-Playing-AI.dir/gui.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jaredking/Desktop/Chess-Playing-AI/gui.cpp -o CMakeFiles/Chess-Playing-AI.dir/gui.cpp.s
+
+CMakeFiles/Chess-Playing-AI.dir/test.cpp.o: CMakeFiles/Chess-Playing-AI.dir/flags.make
+CMakeFiles/Chess-Playing-AI.dir/test.cpp.o: /Users/jaredking/Desktop/Chess-Playing-AI/test.cpp
+CMakeFiles/Chess-Playing-AI.dir/test.cpp.o: CMakeFiles/Chess-Playing-AI.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Chess-Playing-AI.dir/test.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chess-Playing-AI.dir/test.cpp.o -MF CMakeFiles/Chess-Playing-AI.dir/test.cpp.o.d -o CMakeFiles/Chess-Playing-AI.dir/test.cpp.o -c /Users/jaredking/Desktop/Chess-Playing-AI/test.cpp
+
+CMakeFiles/Chess-Playing-AI.dir/test.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Chess-Playing-AI.dir/test.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jaredking/Desktop/Chess-Playing-AI/test.cpp > CMakeFiles/Chess-Playing-AI.dir/test.cpp.i
+
+CMakeFiles/Chess-Playing-AI.dir/test.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Chess-Playing-AI.dir/test.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jaredking/Desktop/Chess-Playing-AI/test.cpp -o CMakeFiles/Chess-Playing-AI.dir/test.cpp.s
+
 # Object files for target Chess-Playing-AI
 Chess__Playing__AI_OBJECTS = \
-"CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o"
+"CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o" \
+"CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o" \
+"CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o" \
+"CMakeFiles/Chess-Playing-AI.dir/test.cpp.o"
 
 # External object files for target Chess-Playing-AI
 Chess__Playing__AI_EXTERNAL_OBJECTS =
 
 Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/chess.cpp.o
+Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o
+Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o
+Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/test.cpp.o
 Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/build.make
 Chess-Playing-AI: /Users/jaredking/Desktop/Chess-Playing-AI/SFML-2.5.1-macos-clang/lib/libsfml-graphics.dylib
 Chess-Playing-AI: /Users/jaredking/Desktop/Chess-Playing-AI/SFML-2.5.1-macos-clang/lib/libsfml-window.dylib
 Chess-Playing-AI: /Users/jaredking/Desktop/Chess-Playing-AI/SFML-2.5.1-macos-clang/lib/libsfml-system.dylib
 Chess-Playing-AI: CMakeFiles/Chess-Playing-AI.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable Chess-Playing-AI"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jaredking/Desktop/Chess-Playing-AI/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable Chess-Playing-AI"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Chess-Playing-AI.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

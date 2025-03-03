@@ -99,6 +99,7 @@ void handleEvents() {
     }
 }
 
+#ifndef UNIT_TEST
 int main() {
     // Set up White pieces
     boardState.pieces[5][0] = 0x000000000000FF00; // White Pawns
@@ -124,3 +125,4 @@ int main() {
 
     return 0;
 }
+#endif

@@ -153,6 +153,78 @@ chess.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/chess.cpp.s
 .PHONY : chess.cpp.s
 
+gameplay.o: gameplay.cpp.o
+.PHONY : gameplay.o
+
+# target to build an object file
+gameplay.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.o
+.PHONY : gameplay.cpp.o
+
+gameplay.i: gameplay.cpp.i
+.PHONY : gameplay.i
+
+# target to preprocess a source file
+gameplay.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.i
+.PHONY : gameplay.cpp.i
+
+gameplay.s: gameplay.cpp.s
+.PHONY : gameplay.s
+
+# target to generate assembly for a file
+gameplay.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/gameplay.cpp.s
+.PHONY : gameplay.cpp.s
+
+gui.o: gui.cpp.o
+.PHONY : gui.o
+
+# target to build an object file
+gui.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/gui.cpp.o
+.PHONY : gui.cpp.o
+
+gui.i: gui.cpp.i
+.PHONY : gui.i
+
+# target to preprocess a source file
+gui.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/gui.cpp.i
+.PHONY : gui.cpp.i
+
+gui.s: gui.cpp.s
+.PHONY : gui.s
+
+# target to generate assembly for a file
+gui.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/gui.cpp.s
+.PHONY : gui.cpp.s
+
+test.o: test.cpp.o
+.PHONY : test.o
+
+# target to build an object file
+test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/test.cpp.o
+.PHONY : test.cpp.o
+
+test.i: test.cpp.i
+.PHONY : test.i
+
+# target to preprocess a source file
+test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/test.cpp.i
+.PHONY : test.cpp.i
+
+test.s: test.cpp.s
+.PHONY : test.s
+
+# target to generate assembly for a file
+test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chess-Playing-AI.dir/build.make CMakeFiles/Chess-Playing-AI.dir/test.cpp.s
+.PHONY : test.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -165,6 +237,15 @@ help:
 	@echo "... chess.o"
 	@echo "... chess.i"
 	@echo "... chess.s"
+	@echo "... gameplay.o"
+	@echo "... gameplay.i"
+	@echo "... gameplay.s"
+	@echo "... gui.o"
+	@echo "... gui.i"
+	@echo "... gui.s"
+	@echo "... test.o"
+	@echo "... test.i"
+	@echo "... test.s"
 .PHONY : help
 
 
