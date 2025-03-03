@@ -2,18 +2,15 @@
 #define CHESS_H
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
 #include <vector>
 #include <iostream>
-#include <chrono>
 #include <cstdint>
-#include <bitset>
 
 using namespace std;
 
 // ========== Chess Constants ==========
-const int boardSize = 8;
-const int squareSize = 150;
+constexpr int boardSize = 8;
+constexpr int squareSize = 150;
 // Declare global variables for GUI and game state
 extern int curTurn;
 extern bool isGameOver;
@@ -30,7 +27,7 @@ enum PieceType {
 
 // Bitboards are indexed by [PieceType][Color] (0 = White, 1 = Black)
 struct ChessState {
-    uint64_t pieces[6][2]; // 6 piece types, 2 colors
+    uint64_t pieces[6][2]{}; // 6 piece types, 2 colors
     uint8_t castlingRights; // 4 bits (KQkq)
     uint8_t enPassantFile; // 6 bits (0-7 if available, 255 if none)
     uint16_t halfmoveClock; // 50-move rule
@@ -38,8 +35,8 @@ struct ChessState {
     bool isWhiteToMove; // 1 bit
 
     ChessState() {
-        for (int i = 0; i < 6; i++) {
-            pieces[i][0] = pieces[i][1] = 0;
+        for (auto &piece: pieces) {
+            piece[0] = piece[1] = 0;
         }
         castlingRights = 0b1111;
         enPassantFile = 255;
@@ -53,23 +50,19 @@ struct ChessState {
 struct Move {
     uint16_t moveData;
 
-    Move(int from = 0, int to = 0, int special = 0) {
+    explicit Move(int from = 0, int to = 0, int special = 0) {
         moveData = (from & 0x3F) | ((to & 0x3F) << 6) | ((special & 0xF) << 12);
     }
 
-    int getFrom() const { return moveData & 0x3F; }
-    int getTo() const { return (moveData >> 6) & 0x3F; }
-    int getSpecial() const { return (moveData >> 12) & 0xF; }
+    [[nodiscard]] int getFrom() const { return moveData & 0x3F; }
+    [[nodiscard]] int getTo() const { return (moveData >> 6) & 0x3F; }
+    [[nodiscard]] int getSpecial() const { return (moveData >> 12) & 0xF; }
 };
 
 // ========== Global Variables ==========
-extern sf::RenderWindow window;
-extern int curTurn;
-extern bool isGameOver;
-extern sf::Texture pieceTextures[15];
-extern sf::Texture highlightTextures[12];
-extern sf::Sprite pieceSprites[boardSize + 1][boardSize];
-sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
+
+
+inline sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
 
 // ========== Function Declarations (No Definitions Here) ==========
 void loadTextures();
@@ -82,9 +75,9 @@ void bitboardToArray(const ChessState &state, int board[8][8]);
 
 int evaluate(const ChessState &state);
 
-Move miniMax(ChessState &state, int depth, int alpha, int beta, bool maximizingPlayer);
+Move miniMax(const ChessState &state, int depth, int alpha, int beta, bool maximizingPlayer);
 
-Move iterativeDeepening(ChessState &state);
+Move iterativeDeepening(const ChessState &state);
 
 ChessState applyMove(const ChessState &state, Move move);
 

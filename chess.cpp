@@ -1,6 +1,4 @@
 #include "chess.h"
-#include "gui.cpp"
-#include "gameplay.cpp"
 #include <iostream>
 
 // Global game state variables

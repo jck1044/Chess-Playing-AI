@@ -24,10 +24,9 @@ uint64_t getPawnMoves(uint64_t pawn, uint64_t emptySquares, bool isWhite) {
 // ========== Generate Knight Moves ==========
 uint64_t getKnightMoves(uint64_t knights) {
     uint64_t moves = 0;
-    uint64_t temp;
 
     // Knight movement bitmasks
-    temp = (knights << 15) & 0xFEFEFEFEFEFEFEFE;
+    uint64_t temp = (knights << 15) & 0xFEFEFEFEFEFEFEFE;
     moves |= temp;
     temp = (knights << 17) & 0x7F7F7F7F7F7F7F7F;
     moves |= temp;
@@ -69,18 +68,18 @@ ChessState applyMove(const ChessState &state, Move move) {
     int enemy = !color;
 
     // Remove enemy piece on the destination square, if any.
-    for (int i = 0; i < 6; i++) {
-        if (newState.pieces[i][enemy] & (1ULL << to)) {
-            newState.pieces[i][enemy] &= ~(1ULL << to);
+    for (auto & piece : newState.pieces) {
+        if (piece[enemy] & (1ULL << to)) {
+            piece[enemy] &= ~(1ULL << to);
             break;
         }
     }
 
     // Move the piece for the current player.
-    for (int i = 0; i < 6; i++) {
-        if (newState.pieces[i][color] & (1ULL << from)) {
-            newState.pieces[i][color] &= ~(1ULL << from);
-            newState.pieces[i][color] |= (1ULL << to);
+    for (auto & piece : newState.pieces) {
+        if (piece[color] & (1ULL << from)) {
+            piece[color] &= ~(1ULL << from);
+            piece[color] |= (1ULL << to);
             break;
         }
     }
@@ -90,21 +89,20 @@ ChessState applyMove(const ChessState &state, Move move) {
 }
 
 
-
 // ========== Generate Legal Moves ==========
 vector<Move> generateMoves(const ChessState &state) {
     vector<Move> moves;
     uint64_t occupied = 0;
-    for (int i = 0; i < 6; i++) {
-        occupied |= state.pieces[i][0] | state.pieces[i][1];
+    for (auto piece : state.pieces) {
+        occupied |= piece[0] | piece[1];
     }
     uint64_t emptySquares = ~occupied;
     int color = (state.isWhiteToMove ? 0 : 1);
 
     // Compute friendly and enemy occupancy.
     uint64_t friendlyOccupancy = 0;
-    for (int i = 0; i < 6; i++) {
-        friendlyOccupancy |= state.pieces[i][color];
+    for (auto piece : state.pieces) {
+        friendlyOccupancy |= piece[color];
     }
     uint64_t enemyOccupancy = occupied & ~friendlyOccupancy;
 
@@ -175,8 +173,8 @@ vector<Move> generateMoves(const ChessState &state) {
         int from = __builtin_ctzll(bishops);
         int rank = from / 8;
         int file = from % 8;
-        for (int d = 0; d < 4; d++) {
-            int dr = bishopDirs[d][0], dc = bishopDirs[d][1];
+        for (auto & bishopDir : bishopDirs) {
+            int dr = bishopDir[0], dc = bishopDir[1];
             int r = rank, c = file;
             while (true) {
                 r += dr;
@@ -203,8 +201,8 @@ vector<Move> generateMoves(const ChessState &state) {
         int from = __builtin_ctzll(rooks);
         int rank = from / 8;
         int file = from % 8;
-        for (int d = 0; d < 4; d++) {
-            int dr = rookDirs[d][0], dc = rookDirs[d][1];
+        for (auto & rookDir : rookDirs) {
+            int dr = rookDir[0], dc = rookDir[1];
             int r = rank, c = file;
             while (true) {
                 r += dr;
@@ -234,8 +232,8 @@ vector<Move> generateMoves(const ChessState &state) {
         int from = __builtin_ctzll(queens);
         int rank = from / 8;
         int file = from % 8;
-        for (int d = 0; d < 8; d++) {
-            int dr = queenDirs[d][0], dc = queenDirs[d][1];
+        for (auto & queenDir : queenDirs) {
+            int dr = queenDir[0], dc = queenDir[1];
             int r = rank, c = file;
             while (true) {
                 r += dr;
@@ -273,7 +271,7 @@ vector<Move> generateMoves(const ChessState &state) {
 }
 
 // ========== Minimax Algorithm ==========
-Move miniMax(ChessState &state, int depth, int alpha, int beta, bool maximizingPlayer) {
+Move miniMax(const ChessState &state, int depth, int alpha, int beta, bool maximizingPlayer) {
     if (depth == 0) {
         return Move(0, 0, evaluate(state));
     }
@@ -308,15 +306,15 @@ Move miniMax(ChessState &state, int depth, int alpha, int beta, bool maximizingP
 }
 
 // ========== Iterative Deepening Search ==========
-Move iterativeDeepening(ChessState &state) {
+Move iterativeDeepening(const ChessState &state) {
     int alpha = INT_MIN;
-    int beta = INT_MAX;
     Move bestMove(0, 0);
     int depth = 2;
     auto startTime = std::chrono::steady_clock::now();
     auto endTime = startTime + std::chrono::seconds(180);
 
     while (std::chrono::steady_clock::now() < endTime) {
+        int beta = INT_MAX;
         Move currentMove = miniMax(state, depth, alpha, beta, false);
         if (currentMove.getFrom() != 0 || currentMove.getTo() != 0) {
             bestMove = currentMove;
