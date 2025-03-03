@@ -3,8 +3,7 @@ project(Chess-Playing-AI)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Chess-Playing-AI chess.cpp gameplay.cpp gui.cpp
-        test.cpp)
+add_executable(Chess-Playing-AI chess.cpp gameplay.cpp gui.cpp)
 include_directories(/usr/local/include)
 
 #find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
@@ -12,7 +11,7 @@ include_directories(/usr/local/include)
 #target_link_libraries(Chess-Playing-AI sfml-system sfml-window sfml-graphics sfml-audio sfml-network)
 
 # Set the path to the SFML libraries
-set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML-2.5.1-macos-clang/lib")
+set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML")
 
 # Find and link SFML libraries
 find_library(SFML_GRAPHICS sfml-graphics PATHS ${SFML_DIR} REQUIRED)
@@ -23,4 +22,4 @@ target_link_libraries(Chess-Playing-AI
         ${SFML_GRAPHICS}
         ${SFML_WINDOW}
         ${SFML_SYSTEM}
-        )
+)

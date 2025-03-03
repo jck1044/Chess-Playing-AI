@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <cstdint>
-#include "chess.h"
 #include <unordered_map>
 
 using namespace std;
@@ -19,7 +18,6 @@ extern sf::RenderWindow window;
 extern sf::Texture pieceTextures[15];
 extern sf::Texture highlightTextures[12];
 extern sf::Sprite pieceSprites[boardSize + 1][boardSize];
-
 
 // Piece Identifiers
 enum PieceType {
@@ -61,7 +59,6 @@ struct Move {
 };
 
 // ========== Global Variables ==========
-
 
 inline sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
 

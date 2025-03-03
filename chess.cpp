@@ -10,7 +10,7 @@ sf::RenderWindow window(sf::VideoMode(1200, 1200), "Chess Game");
 
 ChessState boardState;
 
-// Keep only function implementations
+// Evaluation function: returns a fixed evaluation from White's perspective.
 int evaluate(const ChessState &state) {
     // Mapping: index 0=Rook, 1=Knight, 2=Bishop, 3=Queen, 4=King, 5=Pawn.
     const int pieceValues[6] = {500, 300, 320, 900, 10000, 100};
@@ -20,10 +20,11 @@ int evaluate(const ChessState &state) {
         score += __builtin_popcountll(state.pieces[i][0]) * pieceValues[i];
         score -= __builtin_popcountll(state.pieces[i][1]) * pieceValues[i];
     }
-
+    std::cout << "Evaluating state: score = " << (state.isWhiteToMove ? score : -score) << endl;
+    // Fixed evaluation: always return the score from White's perspective.
     return state.isWhiteToMove ? score : -score;
+    // return score;
 }
-
 
 void handleEvents() {
     int board[8][8];

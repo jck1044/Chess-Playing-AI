@@ -7,34 +7,34 @@ sf::Sprite pieceSprites[boardSize + 1][boardSize];
 
 // ========== Load Textures for Chess Pieces ==========
 void loadTextures() {
-    pieceTextures[0].loadFromFile("piecePics/whiteRook.png");
-    pieceTextures[1].loadFromFile("piecePics/whiteKnight.png");
-    pieceTextures[2].loadFromFile("piecePics/whiteBishop.png");
-    pieceTextures[3].loadFromFile("piecePics/whiteQueen.png");
-    pieceTextures[4].loadFromFile("piecePics/whiteKing.png");
-    pieceTextures[5].loadFromFile("piecePics/whitePawn.png");
-    pieceTextures[6].loadFromFile("piecePics/blackRook.png");
-    pieceTextures[7].loadFromFile("piecePics/blackKnight.png");
-    pieceTextures[8].loadFromFile("piecePics/blackBishop.png");
-    pieceTextures[9].loadFromFile("piecePics/blackQueen.png");
-    pieceTextures[10].loadFromFile("piecePics/blackKing.png");
-    pieceTextures[11].loadFromFile("piecePics/blackPawn.png");
-    pieceTextures[12].loadFromFile("piecePics/inCheck.png");
-    pieceTextures[13].loadFromFile("piecePics/inCheckMate.png");
-    pieceTextures[14].loadFromFile("piecePics/draw.png");
+    pieceTextures[0].loadFromFile("../piecePics/whiteRook.png");
+    pieceTextures[1].loadFromFile("../piecePics/whiteKnight.png");
+    pieceTextures[2].loadFromFile("../piecePics/whiteBishop.png");
+    pieceTextures[3].loadFromFile("../piecePics/whiteQueen.png");
+    pieceTextures[4].loadFromFile("../piecePics/whiteKing.png");
+    pieceTextures[5].loadFromFile("../piecePics/whitePawn.png");
+    pieceTextures[6].loadFromFile("../piecePics/blackRook.png");
+    pieceTextures[7].loadFromFile("../piecePics/blackKnight.png");
+    pieceTextures[8].loadFromFile("../piecePics/blackBishop.png");
+    pieceTextures[9].loadFromFile("../piecePics/blackQueen.png");
+    pieceTextures[10].loadFromFile("../piecePics/blackKing.png");
+    pieceTextures[11].loadFromFile("../piecePics/blackPawn.png");
+    pieceTextures[12].loadFromFile("../piecePics/inCheck.png");
+    pieceTextures[13].loadFromFile("../piecePics/inCheckMate.png");
+    pieceTextures[14].loadFromFile("../piecePics/draw.png");
 
-    highlightTextures[0].loadFromFile("piecePics/whiteRookHighlight.png");
-    highlightTextures[1].loadFromFile("piecePics/whiteKnightHighlight.png");
-    highlightTextures[2].loadFromFile("piecePics/whiteBishopHighlight.png");
-    highlightTextures[3].loadFromFile("piecePics/whiteQueenHighlight.png");
-    highlightTextures[4].loadFromFile("piecePics/whiteKingHighlight.png");
-    highlightTextures[5].loadFromFile("piecePics/whitePawnHighlight.png");
-    highlightTextures[6].loadFromFile("piecePics/blackRookHighlight.png");
-    highlightTextures[7].loadFromFile("piecePics/blackKnightHighlight.png");
-    highlightTextures[8].loadFromFile("piecePics/blackBishopHighlight.png");
-    highlightTextures[9].loadFromFile("piecePics/blackQueenHighlight.png");
-    highlightTextures[10].loadFromFile("piecePics/blackKingHighlight.png");
-    highlightTextures[11].loadFromFile("piecePics/blackPawnHighlight.png");
+    highlightTextures[0].loadFromFile("../piecePics/whiteRookHighlight.png");
+    highlightTextures[1].loadFromFile("../piecePics/whiteKnightHighlight.png");
+    highlightTextures[2].loadFromFile("../piecePics/whiteBishopHighlight.png");
+    highlightTextures[3].loadFromFile("../piecePics/whiteQueenHighlight.png");
+    highlightTextures[4].loadFromFile("../piecePics/whiteKingHighlight.png");
+    highlightTextures[5].loadFromFile("../piecePics/whitePawnHighlight.png");
+    highlightTextures[6].loadFromFile("../piecePics/blackRookHighlight.png");
+    highlightTextures[7].loadFromFile("../piecePics/blackKnightHighlight.png");
+    highlightTextures[8].loadFromFile("../piecePics/blackBishopHighlight.png");
+    highlightTextures[9].loadFromFile("../piecePics/blackQueenHighlight.png");
+    highlightTextures[10].loadFromFile("../piecePics/blackKingHighlight.png");
+    highlightTextures[11].loadFromFile("../piecePics/blackPawnHighlight.png");
 }
 
 // ========== Create Sprites for Board and Pieces ==========

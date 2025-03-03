@@ -1,42 +1,23 @@
 #include "chess.h"
-
-// ========== Generate Pawn Moves ==========
-uint64_t getPawnMoves(uint64_t pawn, uint64_t emptySquares, bool isWhite) {
-    if (isWhite) {
-        uint64_t oneStep = (pawn << 8) & emptySquares;
-        uint64_t twoStep = 0;
-        // White pawns start on rank 2 (bits 8 to 15)
-        if ((pawn & 0x000000000000FF00ULL) && oneStep) {
-            twoStep = (pawn << 16) & emptySquares;
-        }
-        return oneStep | twoStep;
-    } else {
-        uint64_t oneStep = (pawn >> 8) & emptySquares;
-        uint64_t twoStep = 0;
-        // Black pawns start on rank 7 (bits 48 to 55)
-        if ((pawn & 0x00FF000000000000ULL) && oneStep) {
-            twoStep = (pawn >> 16) & emptySquares;
-        }
-        return oneStep | twoStep;
-    }
-}
+#include <cstring>
+#include <iostream>
 
 // ========== Generate Knight Moves ==========
 uint64_t getKnightMoves(uint64_t knights) {
     uint64_t moves = 0;
-    const uint64_t notAFile  = 0xfefefefefefefefeULL;
-    const uint64_t notHFile  = 0x7f7f7f7f7f7f7f7fULL;
+    const uint64_t notAFile = 0xfefefefefefefefeULL;
+    const uint64_t notHFile = 0x7f7f7f7f7f7f7f7fULL;
     const uint64_t notABFile = 0xfcfcfcfcfcfcfcfcULL;
     const uint64_t notGHFile = 0x3f3f3f3f3f3f3f3fULL;
 
-    moves |= (knights << 17) & notAFile;    // 2 up, 1 right
-    moves |= (knights << 15) & notHFile;      // 2 up, 1 left
-    moves |= (knights << 10) & notABFile;     // 1 up, 2 right
-    moves |= (knights << 6)  & notGHFile;     // 1 up, 2 left
-    moves |= (knights >> 17) & notHFile;      // 2 down, 1 left
-    moves |= (knights >> 15) & notAFile;      // 2 down, 1 right
-    moves |= (knights >> 10) & notGHFile;     // 1 down, 2 left
-    moves |= (knights >> 6)  & notABFile;     // 1 down, 2 right
+    moves |= (knights << 17) & notAFile; // 2 up, 1 right
+    moves |= (knights << 15) & notHFile; // 2 up, 1 left
+    moves |= (knights << 10) & notABFile; // 1 up, 2 right
+    moves |= (knights << 6) & notGHFile; // 1 up, 2 left
+    moves |= (knights >> 17) & notHFile; // 2 down, 1 left
+    moves |= (knights >> 15) & notAFile; // 2 down, 1 right
+    moves |= (knights >> 10) & notGHFile; // 1 down, 2 left
+    moves |= (knights >> 6) & notABFile; // 1 down, 2 right
 
     return moves;
 }
@@ -63,7 +44,7 @@ ChessState applyMove(const ChessState &state, Move move) {
     int enemy = !color;
 
     // Remove enemy piece on the destination square, if any.
-    for (auto & piece : newState.pieces) {
+    for (auto &piece: newState.pieces) {
         if (piece[enemy] & (1ULL << to)) {
             piece[enemy] &= ~(1ULL << to);
             break;
@@ -71,7 +52,7 @@ ChessState applyMove(const ChessState &state, Move move) {
     }
 
     // Move the piece for the current player.
-    for (auto & piece : newState.pieces) {
+    for (auto &piece: newState.pieces) {
         if (piece[color] & (1ULL << from)) {
             piece[color] &= ~(1ULL << from);
             piece[color] |= (1ULL << to);
@@ -83,12 +64,11 @@ ChessState applyMove(const ChessState &state, Move move) {
     return newState;
 }
 
-
 // ========== Generate Legal Moves ==========
 vector<Move> generateMoves(const ChessState &state) {
     vector<Move> moves;
     uint64_t occupied = 0;
-    for (auto piece : state.pieces) {
+    for (auto piece: state.pieces) {
         occupied |= piece[0] | piece[1];
     }
     uint64_t emptySquares = ~occupied;
@@ -96,7 +76,7 @@ vector<Move> generateMoves(const ChessState &state) {
 
     // Compute friendly and enemy occupancy.
     uint64_t friendlyOccupancy = 0;
-    for (auto piece : state.pieces) {
+    for (auto piece: state.pieces) {
         friendlyOccupancy |= piece[color];
     }
     uint64_t enemyOccupancy = occupied & ~friendlyOccupancy;
@@ -168,7 +148,7 @@ vector<Move> generateMoves(const ChessState &state) {
         int from = __builtin_ctzll(bishops);
         int rank = from / 8;
         int file = from % 8;
-        for (auto & bishopDir : bishopDirs) {
+        for (auto &bishopDir: bishopDirs) {
             int dr = bishopDir[0], dc = bishopDir[1];
             int r = rank, c = file;
             while (true) {
@@ -196,7 +176,7 @@ vector<Move> generateMoves(const ChessState &state) {
         int from = __builtin_ctzll(rooks);
         int rank = from / 8;
         int file = from % 8;
-        for (auto & rookDir : rookDirs) {
+        for (auto &rookDir: rookDirs) {
             int dr = rookDir[0], dc = rookDir[1];
             int r = rank, c = file;
             while (true) {
@@ -227,7 +207,7 @@ vector<Move> generateMoves(const ChessState &state) {
         int from = __builtin_ctzll(queens);
         int rank = from / 8;
         int file = from % 8;
-        for (auto & queenDir : queenDirs) {
+        for (auto &queenDir: queenDirs) {
             int dr = queenDir[0], dc = queenDir[1];
             int r = rank, c = file;
             while (true) {
@@ -266,28 +246,24 @@ vector<Move> generateMoves(const ChessState &state) {
 }
 
 // ---------------------------------------------------------------------
-// New: Transposition Table Definitions
+// Transposition Table Definitions and Hash Computation
 // ---------------------------------------------------------------------
 enum TTFlag { EXACT, LOWERBOUND, UPPERBOUND };
 
 struct TTEntry {
-    int eval;       // Evaluation of the position
-    int depth;      // Remaining search depth at which this was computed
-    TTFlag flag;    // The type of bound this evaluation represents
-    Move bestMove;  // The best move found from this position
+    int eval; // Evaluation of the position
+    int depth; // Remaining search depth at which this was computed
+    TTFlag flag; // The type of bound this evaluation represents
+    Move bestMove; // The best move found from this position
 };
 
-// Global transposition table (can be cleared or resized as needed)
 static std::unordered_map<uint64_t, TTEntry> transpositionTable;
 
-// ---------------------------------------------------------------------
-// New: Compute a hash for the ChessState using FNV–1a hash algorithm
-// ---------------------------------------------------------------------
 uint64_t computeHash(const ChessState &state) {
     uint64_t hash = 1469598103934665603ULL; // FNV offset basis
     auto hashCombine = [&hash](uint64_t data) {
         hash ^= data;
-        hash *= 1099511628211ULL;  // FNV prime
+        hash *= 1099511628211ULL; // FNV prime
     };
 
     for (int piece = 0; piece < 6; piece++) {
@@ -303,22 +279,19 @@ uint64_t computeHash(const ChessState &state) {
 }
 
 // ---------------------------------------------------------------------
-// Updated minimax function with transposition table and alpha-beta
+// Updated minimax function with transposition table and alpha-beta pruning
 // ---------------------------------------------------------------------
 Move miniMax(const ChessState &state, int depth, int alpha, int beta, bool maximizingPlayer) {
-    // Base case: return evaluation in the special field of Move
     if (depth == 0) {
-        return Move(0, 0, evaluate(state));
+        int evalScore = evaluate(state);
+        std::cout << "Leaf reached at depth 0: eval = " << evalScore << endl;
+        return Move(0, 0, evalScore);
     }
 
-    // Save original alpha and beta for flag determination later
     int originalAlpha = alpha;
     int originalBeta = beta;
-
-    // Compute hash key for the current state
     uint64_t hash = computeHash(state);
 
-    // Check if this state was already evaluated to at least this depth
     if (transpositionTable.find(hash) != transpositionTable.end()) {
         TTEntry entry = transpositionTable[hash];
         if (entry.depth >= depth) {
@@ -336,14 +309,14 @@ Move miniMax(const ChessState &state, int depth, int alpha, int beta, bool maxim
     }
 
     Move bestMove(0, 0);
-    // Initialize bestEval to a very low or very high value depending on player
     int bestEval = maximizingPlayer ? -999999 : 999999;
 
-    // Generate moves and search recursively
     vector<Move> moves = generateMoves(state);
-    for (Move move : moves) {
+    for (Move move: moves) {
+        std::cout << "Depth " << depth << ": Evaluating move from " << move.getFrom() << " to " << move.getTo() << endl;
         ChessState newState = applyMove(state, move);
         int eval = miniMax(newState, depth - 1, alpha, beta, !maximizingPlayer).getSpecial();
+        std::cout << "Move from " << move.getFrom() << " to " << move.getTo() << " evaluated to " << eval << endl;
         if (maximizingPlayer) {
             if (eval > bestEval) {
                 bestEval = eval;
@@ -357,10 +330,13 @@ Move miniMax(const ChessState &state, int depth, int alpha, int beta, bool maxim
             }
             beta = std::min(beta, eval);
         }
-        if (alpha >= beta) break;
+        std::cout << "After move: alpha = " << alpha << ", beta = " << beta << endl;
+        if (alpha >= beta) {
+            std::cout << "Pruning at depth " << depth << " with alpha = " << alpha << " and beta = " << beta << endl;
+            break;
+        }
     }
 
-    // Determine TT flag based on the final bounds
     TTFlag flag;
     if (bestEval <= originalAlpha) {
         flag = UPPERBOUND;
@@ -369,9 +345,7 @@ Move miniMax(const ChessState &state, int depth, int alpha, int beta, bool maxim
     } else {
         flag = EXACT;
     }
-
-    // Store the computed result in the transposition table
-    transpositionTable[hash] = { bestEval, depth, flag, bestMove };
+    transpositionTable[hash] = {bestEval, depth, flag, bestMove};
 
     return bestMove;
 }
@@ -379,19 +353,23 @@ Move miniMax(const ChessState &state, int depth, int alpha, int beta, bool maxim
 // ========== Iterative Deepening Search ==========
 Move iterativeDeepening(const ChessState &state) {
     int alpha = INT_MIN;
+    int beta = INT_MAX;
     Move bestMove(0, 0);
     int depth = 2;
     auto startTime = std::chrono::steady_clock::now();
     auto endTime = startTime + std::chrono::seconds(180);
 
     while (std::chrono::steady_clock::now() < endTime) {
-        int beta = INT_MAX;
+        std::cout << "Iterative deepening at depth: " << depth << endl;
         Move currentMove = miniMax(state, depth, alpha, beta, false);
+        std::cout << "At depth " << depth << ", best move so far: from "
+                << currentMove.getFrom() << " to " << currentMove.getTo()
+                << " with eval " << currentMove.getSpecial() << endl;
         if (currentMove.getFrom() != 0 || currentMove.getTo() != 0) {
             bestMove = currentMove;
         }
         depth += 2;
-        if (depth > 8) break;
+        if (depth > 2) break;
     }
     return bestMove;
 }
