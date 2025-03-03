@@ -84,34 +84,71 @@ ChessState applyMove(const ChessState &state, Move move) {
 vector<Move> generateMoves(const ChessState &state) {
     vector<Move> moves;
     uint64_t occupied = 0;
-
     for (int i = 0; i < 6; i++) {
         occupied |= state.pieces[i][0] | state.pieces[i][1];
     }
-
     uint64_t emptySquares = ~occupied;
     int color = (state.isWhiteToMove ? 0 : 1);
 
-    // Generate pawn moves
+    // Compute friendly and enemy occupancy.
+    uint64_t friendlyOccupancy = 0;
+    for (int i = 0; i < 6; i++) {
+        friendlyOccupancy |= state.pieces[i][color];
+    }
+    uint64_t enemyOccupancy = occupied & ~friendlyOccupancy;
+
+    // ===== Pawn Moves =====
     uint64_t pawns = state.pieces[5][color];
     while (pawns) {
         int from = __builtin_ctzll(pawns);
         uint64_t pawn = 1ULL << from;
-        uint64_t movesForPawn = getPawnMoves(pawn, emptySquares, (color == 0));
-        while (movesForPawn) {
-            int to = __builtin_ctzll(movesForPawn);
+        uint64_t oneStep, twoStep, leftCapture, rightCapture;
+        if (color == 0) {
+            oneStep = (pawn << 8) & emptySquares;
+            twoStep = 0;
+            // White pawns start on rank 2 (bit indices 8..15)
+            if (pawn & 0x000000000000FF00ULL && oneStep) {
+                twoStep = (pawn << 16) & emptySquares;
+            }
+            leftCapture = (pawn << 7) & 0xFEFEFEFEFEFEFEFEULL;
+            rightCapture = (pawn << 9) & 0x7F7F7F7F7F7F7F7FULL;
+        } else {
+            oneStep = (pawn >> 8) & emptySquares;
+            twoStep = 0;
+            // Black pawns start on rank 7 (bit indices 48..55)
+            if (pawn & 0x00FF000000000000ULL && oneStep) {
+                twoStep = (pawn >> 16) & emptySquares;
+            }
+            leftCapture = (pawn >> 9) & 0xFEFEFEFEFEFEFEFEULL;
+            rightCapture = (pawn >> 7) & 0x7F7F7F7F7F7F7F7FULL;
+        }
+        // Add one and two-step moves.
+        uint64_t pawnMoves = oneStep | twoStep;
+        while (pawnMoves) {
+            int to = __builtin_ctzll(pawnMoves);
             moves.emplace_back(from, to);
-            movesForPawn &= (movesForPawn - 1);
+            pawnMoves &= (pawnMoves - 1);
+        }
+        // Add capturing moves.
+        leftCapture &= enemyOccupancy;
+        rightCapture &= enemyOccupancy;
+        if (leftCapture) {
+            int to = __builtin_ctzll(leftCapture);
+            moves.emplace_back(from, to);
+        }
+        if (rightCapture) {
+            int to = __builtin_ctzll(rightCapture);
+            moves.emplace_back(from, to);
         }
         pawns &= (pawns - 1);
     }
 
-    // Generate knight moves
+    // ===== Knight Moves =====
     uint64_t knights = state.pieces[1][color];
     while (knights) {
         int from = __builtin_ctzll(knights);
         uint64_t knight = 1ULL << from;
-        uint64_t movesForKnight = getKnightMoves(knight);
+        uint64_t movesForKnight = getKnightMoves(knight) & ~friendlyOccupancy;
         while (movesForKnight) {
             int to = __builtin_ctzll(movesForKnight);
             moves.emplace_back(from, to);
@@ -120,26 +157,27 @@ vector<Move> generateMoves(const ChessState &state) {
         knights &= (knights - 1);
     }
 
-    // Generate bishop moves (diagonal sliding moves)
+    // ===== Bishop Moves (Diagonals) =====
     uint64_t bishops = state.pieces[2][color];
+    int bishopDirs[4][2] = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
     while (bishops) {
         int from = __builtin_ctzll(bishops);
-        int rank = from / 8;   // rank: 0 (bottom) to 7 (top)
-        int file = from % 8;   // file: 0 (a) to 7 (h)
-        // Define the four diagonal directions: NE, NW, SE, SW.
-        int directions[4][2] = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+        int rank = from / 8;
+        int file = from % 8;
         for (int d = 0; d < 4; d++) {
-            int dr = directions[d][0], dc = directions[d][1];
+            int dr = bishopDirs[d][0], dc = bishopDirs[d][1];
             int r = rank, c = file;
             while (true) {
                 r += dr;
                 c += dc;
-                if (r < 0 || r > 7 || c < 0 || c > 7) break;
+                if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
                 int to = r * 8 + c;
                 if (emptySquares & (1ULL << to)) {
                     moves.emplace_back(from, to);
-                } else {
-                    // For now, stop sliding when hitting any occupied square.
+                } else if (enemyOccupancy & (1ULL << to)) {
+                    moves.emplace_back(from, to);
+                    break;
+                } else { // Friendly piece encountered.
                     break;
                 }
             }
@@ -147,12 +185,69 @@ vector<Move> generateMoves(const ChessState &state) {
         bishops &= (bishops - 1);
     }
 
-    // Generate king moves
+    // ===== Rook Moves (Vertical & Horizontal) =====
+    uint64_t rooks = state.pieces[0][color];
+    int rookDirs[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+    while (rooks) {
+        int from = __builtin_ctzll(rooks);
+        int rank = from / 8;
+        int file = from % 8;
+        for (int d = 0; d < 4; d++) {
+            int dr = rookDirs[d][0], dc = rookDirs[d][1];
+            int r = rank, c = file;
+            while (true) {
+                r += dr;
+                c += dc;
+                if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
+                int to = r * 8 + c;
+                if (emptySquares & (1ULL << to)) {
+                    moves.emplace_back(from, to);
+                } else if (enemyOccupancy & (1ULL << to)) {
+                    moves.emplace_back(from, to);
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        rooks &= (rooks - 1);
+    }
+
+    // ===== Queen Moves (Rook + Bishop Directions) =====
+    uint64_t queens = state.pieces[3][color];
+    int queenDirs[8][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                            {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+    while (queens) {
+        int from = __builtin_ctzll(queens);
+        int rank = from / 8;
+        int file = from % 8;
+        for (int d = 0; d < 8; d++) {
+            int dr = queenDirs[d][0], dc = queenDirs[d][1];
+            int r = rank, c = file;
+            while (true) {
+                r += dr;
+                c += dc;
+                if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
+                int to = r * 8 + c;
+                if (emptySquares & (1ULL << to)) {
+                    moves.emplace_back(from, to);
+                } else if (enemyOccupancy & (1ULL << to)) {
+                    moves.emplace_back(from, to);
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        queens &= (queens - 1);
+    }
+
+    // ===== King Moves =====
     uint64_t kings = state.pieces[4][color];
     while (kings) {
         int from = __builtin_ctzll(kings);
         uint64_t king = 1ULL << from;
-        uint64_t movesForKing = getKingMoves(king);
+        uint64_t movesForKing = getKingMoves(king) & ~friendlyOccupancy;
         while (movesForKing) {
             int to = __builtin_ctzll(movesForKing);
             moves.emplace_back(from, to);
