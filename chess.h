@@ -57,9 +57,9 @@ struct Move {
         moveData = (from & 0x3F) | ((to & 0x3F) << 6) | ((special & 0xF) << 12);
     }
 
-    int getFrom() { return moveData & 0x3F; }
-    int getTo() { return (moveData >> 6) & 0x3F; }
-    int getSpecial() { return (moveData >> 12) & 0xF; }
+    int getFrom() const { return moveData & 0x3F; }
+    int getTo() const { return (moveData >> 6) & 0x3F; }
+    int getSpecial() const { return (moveData >> 12) & 0xF; }
 };
 
 // ========== Global Variables ==========
