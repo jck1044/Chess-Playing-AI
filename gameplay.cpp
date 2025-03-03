@@ -107,22 +107,24 @@ vector<Move> generateMoves(const ChessState &state) {
             oneStep = (pawn << 8) & emptySquares;
             twoStep = 0;
             // White pawns start on rank 2 (bit indices 8..15)
-            if (pawn & 0x000000000000FF00ULL && oneStep) {
+            if ((pawn & 0x000000000000FF00ULL) && oneStep) {
                 twoStep = (pawn << 16) & emptySquares;
             }
-            leftCapture = (pawn << 7) & 0xFEFEFEFEFEFEFEFEULL;
-            rightCapture = (pawn << 9) & 0x7F7F7F7F7F7F7F7FULL;
+            // Apply file masks BEFORE shifting to prevent wrap-around.
+            leftCapture = ((pawn & 0xFEFEFEFEFEFEFEFEULL) << 7) & enemyOccupancy;
+            rightCapture = ((pawn & 0x7F7F7F7F7F7F7F7FULL) << 9) & enemyOccupancy;
         } else {
             oneStep = (pawn >> 8) & emptySquares;
             twoStep = 0;
             // Black pawns start on rank 7 (bit indices 48..55)
-            if (pawn & 0x00FF000000000000ULL && oneStep) {
+            if ((pawn & 0x00FF000000000000ULL) && oneStep) {
                 twoStep = (pawn >> 16) & emptySquares;
             }
-            leftCapture = (pawn >> 9) & 0xFEFEFEFEFEFEFEFEULL;
-            rightCapture = (pawn >> 7) & 0x7F7F7F7F7F7F7F7FULL;
+            // Apply file masks BEFORE shifting to prevent wrap-around.
+            leftCapture = ((pawn & 0xFEFEFEFEFEFEFEFEULL) >> 9) & enemyOccupancy;
+            rightCapture = ((pawn & 0x7F7F7F7F7F7F7F7FULL) >> 7) & enemyOccupancy;
         }
-        // Add one and two-step moves.
+        // Add one- and two-step moves.
         uint64_t pawnMoves = oneStep | twoStep;
         while (pawnMoves) {
             int to = __builtin_ctzll(pawnMoves);
@@ -130,8 +132,6 @@ vector<Move> generateMoves(const ChessState &state) {
             pawnMoves &= (pawnMoves - 1);
         }
         // Add capturing moves.
-        leftCapture &= enemyOccupancy;
-        rightCapture &= enemyOccupancy;
         if (leftCapture) {
             int to = __builtin_ctzll(leftCapture);
             moves.emplace_back(from, to);
@@ -178,7 +178,6 @@ vector<Move> generateMoves(const ChessState &state) {
                     moves.emplace_back(from, to);
                     break;
                 } else {
-                    // Friendly piece encountered.
                     break;
                 }
             }
@@ -303,19 +302,16 @@ Move iterativeDeepening(ChessState &state) {
     int beta = INT_MAX;
     Move bestMove(0, 0);
     int depth = 2;
-    std::chrono::steady_clock::time_point startTime;
-    std::chrono::steady_clock::time_point endTime;
+    auto startTime = std::chrono::steady_clock::now();
+    auto endTime = startTime + std::chrono::seconds(180);
 
-    startTime = chrono::steady_clock::now();
-    endTime = startTime + chrono::seconds(180);
-
-    while (chrono::steady_clock::now() < endTime) {
+    while (std::chrono::steady_clock::now() < endTime) {
         Move currentMove = miniMax(state, depth, alpha, beta, false);
         if (currentMove.getFrom() != 0 || currentMove.getTo() != 0) {
             bestMove = currentMove;
         }
         depth += 2;
-        if (depth > 6) break;
+        if (depth > 2) break;
     }
     return bestMove;
 }
