@@ -1,8 +1,24 @@
 #include "chess.h"
 
 // ========== Generate Pawn Moves ==========
-uint64_t getPawnMoves(uint64_t pawns, uint64_t emptySquares, bool isWhite) {
-    return isWhite ? (pawns << 8) & emptySquares : (pawns >> 8) & emptySquares;
+uint64_t getPawnMoves(uint64_t pawn, uint64_t emptySquares, bool isWhite) {
+    if (isWhite) {
+        uint64_t oneStep = (pawn << 8) & emptySquares;
+        uint64_t twoStep = 0;
+        // White pawns start on rank 2 (bits 8 to 15)
+        if ((pawn & 0x000000000000FF00ULL) && oneStep) {
+            twoStep = (pawn << 16) & emptySquares;
+        }
+        return oneStep | twoStep;
+    } else {
+        uint64_t oneStep = (pawn >> 8) & emptySquares;
+        uint64_t twoStep = 0;
+        // Black pawns start on rank 7 (bits 48 to 55)
+        if ((pawn & 0x00FF000000000000ULL) && oneStep) {
+            twoStep = (pawn >> 16) & emptySquares;
+        }
+        return oneStep | twoStep;
+    }
 }
 
 // ========== Generate Knight Moves ==========
@@ -72,15 +88,15 @@ vector<Move> generateMoves(const ChessState &state) {
     for (int i = 0; i < 6; i++) {
         occupied |= state.pieces[i][0] | state.pieces[i][1];
     }
+
     uint64_t emptySquares = ~occupied;
-    int color = (state.isWhiteToMove ? 0 : 1);  // Use correct index
+    int color = (state.isWhiteToMove ? 0 : 1);
 
     // Generate pawn moves
     uint64_t pawns = state.pieces[5][color];
     while (pawns) {
         int from = __builtin_ctzll(pawns);
         uint64_t pawn = 1ULL << from;
-        // Pass true if white, false if black.
         uint64_t movesForPawn = getPawnMoves(pawn, emptySquares, (color == 0));
         while (movesForPawn) {
             int to = __builtin_ctzll(movesForPawn);
@@ -102,6 +118,33 @@ vector<Move> generateMoves(const ChessState &state) {
             movesForKnight &= (movesForKnight - 1);
         }
         knights &= (knights - 1);
+    }
+
+    // Generate bishop moves (diagonal sliding moves)
+    uint64_t bishops = state.pieces[2][color];
+    while (bishops) {
+        int from = __builtin_ctzll(bishops);
+        int rank = from / 8;   // rank: 0 (bottom) to 7 (top)
+        int file = from % 8;   // file: 0 (a) to 7 (h)
+        // Define the four diagonal directions: NE, NW, SE, SW.
+        int directions[4][2] = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+        for (int d = 0; d < 4; d++) {
+            int dr = directions[d][0], dc = directions[d][1];
+            int r = rank, c = file;
+            while (true) {
+                r += dr;
+                c += dc;
+                if (r < 0 || r > 7 || c < 0 || c > 7) break;
+                int to = r * 8 + c;
+                if (emptySquares & (1ULL << to)) {
+                    moves.emplace_back(from, to);
+                } else {
+                    // For now, stop sliding when hitting any occupied square.
+                    break;
+                }
+            }
+        }
+        bishops &= (bishops - 1);
     }
 
     // Generate king moves
