@@ -396,7 +396,7 @@ Move iterativeDeepening(const ChessState &state) {
             bestMove = currentMove;
         }
         depth += 2;
-        if (depth > 2) break;
+        if (depth > 8) break;
     }
     return bestMove;
 }
