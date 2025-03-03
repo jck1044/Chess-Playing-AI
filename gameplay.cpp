@@ -49,11 +49,12 @@ uint64_t getKingMoves(uint64_t king) {
 ChessState applyMove(const ChessState &state, Move move) {
     ChessState newState = state;
     int from = move.getFrom(), to = move.getTo();
+    int color = (state.isWhiteToMove ? 0 : 1); // Correct mapping: white->0, black->1
 
     for (int i = 0; i < 6; i++) {
-        if (newState.pieces[i][state.isWhiteToMove] & (1ULL << from)) {
-            newState.pieces[i][state.isWhiteToMove] ^= (1ULL << from);
-            newState.pieces[i][state.isWhiteToMove] |= (1ULL << to);
+        if (newState.pieces[i][color] & (1ULL << from)) {
+            newState.pieces[i][color] ^= (1ULL << from);
+            newState.pieces[i][color] |= (1ULL << to);
             break;
         }
     }
@@ -61,6 +62,7 @@ ChessState applyMove(const ChessState &state, Move move) {
     newState.isWhiteToMove = !state.isWhiteToMove;
     return newState;
 }
+
 
 // ========== Generate Legal Moves ==========
 vector<Move> generateMoves(const ChessState &state) {
@@ -70,32 +72,50 @@ vector<Move> generateMoves(const ChessState &state) {
     for (int i = 0; i < 6; i++) {
         occupied |= state.pieces[i][0] | state.pieces[i][1];
     }
-
     uint64_t emptySquares = ~occupied;
+    int color = (state.isWhiteToMove ? 0 : 1);  // Use correct index
 
     // Generate pawn moves
-    uint64_t pawnMoves = getPawnMoves(state.pieces[5][state.isWhiteToMove], emptySquares, state.isWhiteToMove);
-    while (pawnMoves) {
-        int to = __builtin_ctzll(pawnMoves);
-        int from = to + (state.isWhiteToMove ? -8 : 8);
-        moves.emplace_back(from, to);
-        pawnMoves &= (pawnMoves - 1);
+    uint64_t pawns = state.pieces[5][color];
+    while (pawns) {
+        int from = __builtin_ctzll(pawns);
+        uint64_t pawn = 1ULL << from;
+        // Pass true if white, false if black.
+        uint64_t movesForPawn = getPawnMoves(pawn, emptySquares, (color == 0));
+        while (movesForPawn) {
+            int to = __builtin_ctzll(movesForPawn);
+            moves.emplace_back(from, to);
+            movesForPawn &= (movesForPawn - 1);
+        }
+        pawns &= (pawns - 1);
     }
 
     // Generate knight moves
-    uint64_t knightMoves = getKnightMoves(state.pieces[1][state.isWhiteToMove]);
-    while (knightMoves) {
-        int to = __builtin_ctzll(knightMoves);
-        moves.emplace_back(0, to);
-        knightMoves &= (knightMoves - 1);
+    uint64_t knights = state.pieces[1][color];
+    while (knights) {
+        int from = __builtin_ctzll(knights);
+        uint64_t knight = 1ULL << from;
+        uint64_t movesForKnight = getKnightMoves(knight);
+        while (movesForKnight) {
+            int to = __builtin_ctzll(movesForKnight);
+            moves.emplace_back(from, to);
+            movesForKnight &= (movesForKnight - 1);
+        }
+        knights &= (knights - 1);
     }
 
     // Generate king moves
-    uint64_t kingMoves = getKingMoves(state.pieces[4][state.isWhiteToMove]);
-    while (kingMoves) {
-        int to = __builtin_ctzll(kingMoves);
-        moves.emplace_back(0, to);
-        kingMoves &= (kingMoves - 1);
+    uint64_t kings = state.pieces[4][color];
+    while (kings) {
+        int from = __builtin_ctzll(kings);
+        uint64_t king = 1ULL << from;
+        uint64_t movesForKing = getKingMoves(king);
+        while (movesForKing) {
+            int to = __builtin_ctzll(movesForKing);
+            moves.emplace_back(from, to);
+            movesForKing &= (movesForKing - 1);
+        }
+        kings &= (kings - 1);
     }
 
     return moves;

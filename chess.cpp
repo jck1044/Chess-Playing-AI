@@ -1,6 +1,7 @@
 #include "chess.h"
 #include "gui.cpp"
 #include "gameplay.cpp"
+#include <iostream>
 
 // Global game state variables
 int curTurn = 1;  // 1 = White, 2 = Black
@@ -39,6 +40,7 @@ void handleEvents() {
                     sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
                     int col = mousePosition.x / squareSize;
                     int row = mousePosition.y / squareSize;
+                    std::cout << "Mouse click at pixel (" << mousePosition.x << ", " << mousePosition.y << ") mapped to board (" << row << ", " << col << ")\n";
 
                     static sf::Vector2i selectedPiecePosition;
                     static bool isPieceSelected = false;
@@ -47,21 +49,29 @@ void handleEvents() {
                         if ((board[row][col] > 0 && curTurn == 1) || (board[row][col] < 0 && curTurn == 2)) {
                             isPieceSelected = true;
                             selectedPiecePosition = sf::Vector2i(col, row);
+                            std::cout << "Piece selected at board (" << row << ", " << col << ")\n";
                         }
                     } else {
                         int selectedCol = selectedPiecePosition.x;
                         int selectedRow = selectedPiecePosition.y;
+                        // Convert board coordinates to bitboard indices using the flipped row:
+                        int from = (7 - selectedRow) * 8 + selectedCol;
+                        int to = (7 - row) * 8 + col;
+                        std::cout << "Moving piece from board (" << selectedRow << ", " << selectedCol << ") [bit index " << from << "] to board (" << row << ", " << col << ") [bit index " << to << "]\n";
 
-                        int from = selectedRow * 8 + selectedCol;
-                        int to = row * 8 + col;
                         Move move(from, to);
                         boardState = applyMove(boardState, move);
+                        std::cout << "Player move applied.\n";
 
                         isPieceSelected = false;
                         curTurn = (curTurn % 2) + 1;
                         if (curTurn == 2) {
+                            std::cout << "AI's turn. Starting iterative deepening search...\n";
                             Move aiMove = iterativeDeepening(boardState);
+                            std::cout << "AI move: from " << aiMove.getFrom() << " to " << aiMove.getTo()
+                                      << " with special " << aiMove.getSpecial() << "\n";
                             boardState = applyMove(boardState, aiMove);
+                            std::cout << "AI move applied. Resetting turn to white.\n";
                             curTurn = 1;
                         }
                     }
